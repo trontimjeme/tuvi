@@ -4,8 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#123b32" />
-  <meta name="description" content="Tử Vi AZONE STUDIO v1.0.10: lập lá số bằng mã nguồn gốc và tra dữ liệu luận giải Code v4.0 theo năm." />
-  <title>AZONE STUDIO 135 ĐỒNG QUANG</title>
+  <meta name="description" content="✓ TỬ VI KHÔNG GIAN SỐNG" />
+  <title>✓ AZONE STUDIO GENCHART</title>
+  <link rel="canonical" href="https://tuvi-dun.vercel.app/" />
+  <link rel="icon" href="/site/azone-emblem.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:site_name" content="AZONE STUDIO" />
+  <meta property="og:title" content="✓ AZONE STUDIO GENCHART" />
+  <meta property="og:description" content="✓ TỬ VI KHÔNG GIAN SỐNG" />
+  <meta property="og:url" content="https://tuvi-dun.vercel.app/" />
+  <meta property="og:image" content="https://tuvi-dun.vercel.app/site/share-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AZONE STUDIO GENCHART — TỬ VI KHÔNG GIAN SỐNG" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="✓ AZONE STUDIO GENCHART" />
+  <meta name="twitter:description" content="✓ TỬ VI KHÔNG GIAN SỐNG" />
+  <meta name="twitter:image" content="https://tuvi-dun.vercel.app/site/share-preview.png" />
   <style>
     :root{--page:#f8f7f2;--surface:#fffefa;--surface2:#f4f1e9;--muted:#f5f4ee;--green:#173e34;--forest:#0e332a;--forest2:#214b3f;--ink:#233a33;--body:#425850;--light:#6f8079;--line:#e7e5d9;--gold:#b78b47;--goldlight:#eadabb;--accent:#cc9f59;--shadow:0 18px 45px rgba(32,54,46,.07);--radius:18px}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--page);font-family:"Segoe UI","Noto Sans",Arial,sans-serif;font-size:14px;line-height:1.52;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(183,139,71,.48);outline-offset:3px}svg{display:block;flex-shrink:0}img{max-width:100%}.serif{font-family:"Noto Serif",Cambria,"Times New Roman",serif}.app{min-height:100vh;display:grid;grid-template-columns:268px minmax(0,1fr)}
@@ -386,8 +402,9 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     });dot(hub.x,hub.y,4.5);board.appendChild(svg);
   }
   new ResizeObserver(()=>requestAnimationFrame(drawNeon)).observe($('#chartBoard'));
-  window.addEventListener('beforeprint',drawNeon);
-  window.addEventListener('afterprint',()=>requestAnimationFrame(drawNeon));
+  let titleBeforePrint=document.title;
+  window.addEventListener('beforeprint',()=>{titleBeforePrint=document.title;document.title='AZONE STUDIO 135 ĐỒNG QUANG';drawNeon();});
+  window.addEventListener('afterprint',()=>{document.title=titleBeforePrint;requestAnimationFrame(drawNeon);});
   const topics=[['Tổng quan','Mô tả cấu trúc và dữ kiện lá số','✧'],['Tính cách','Các góc nhìn về đặc điểm cá nhân','人'],['Tình duyên','Nhóm chủ đề quan hệ đôi lứa','♡'],['Sự nghiệp','Các chủ đề nghề nghiệp, công việc','職'],['Tài lộc','Các chủ đề về tài chính, nguồn lực','財'],['Sức khỏe','Tham khảo theo văn hóa truyền thống','+'],['Anh chị em','Các quan hệ trong gia đình','家'],['Con cái','Nhóm chủ đề cung Tử Tức','子'],['Thiên di','Môi trường bên ngoài, dịch chuyển','行'],['Bạn bè','Các quan hệ và cộng sự','友'],['Nhà cửa','Không gian sống và điền trạch','宅'],['Phúc đức','Góc nhìn về đời sống tinh thần','福'],['Cha mẹ','Các quan hệ phụ mẫu','親']];
   function drawTopics(){topics.forEach(([title,sub,ico],i)=>{let b=document.createElement('button');b.className='topic-card'+(!i?' selected':'');b.innerHTML=`<div class="topic-icon">${ico}</div><strong>${title}</strong><p>${sub}</p>`;b.addEventListener('click',()=>{$$('.topic-card').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('#topicTitle').textContent=title;currentTopicIndex=i;renderReading();});$('#topics').appendChild(b)})}
   const stars=['Tử Vi','Thiên Cơ','Thái Dương','Vũ Khúc','Thiên Đồng','Liêm Trinh','Thiên Phủ','Thái Âm','Tham Lang','Cự Môn','Thiên Tướng','Thiên Lương','Thất Sát','Phá Quân'];

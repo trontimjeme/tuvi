@@ -12,13 +12,27 @@
 - `POST /api/interpret`: tra cứu luận giải v4.0 bằng cách tải **một tệp theo năm**, kiểm tra SHA-256 và giải nén theo luồng `fzstd`. Đây là chế độ thử nghiệm tài nguyên lớn, có thể bị timeout trên Netlify; không nên dùng cho tải cao trước khi lập chỉ mục trong cơ sở dữ liệu riêng.
 - Bot tra cứu trên giao diện đọc bảng sao, cung từ mã nguồn đã đối chiếu; Bot có thể đọc vị trí sao vừa lập ở trình duyệt. **Không phải mô hình ngôn ngữ và không được huấn luyện trên 56,6 GB dữ liệu.**
 
-## Bot đọc lá số đang mở
+## Bot đọc lá số và xem theo năm
 
-Sau khi tạo lá số, mở **Trợ lý Tử Vi** và hỏi “Lá số này giàu nhất khi nào?”, “Công việc của tôi thế nào?” hoặc “Luận giải lá số này”. Bot đọc trực tiếp `window.AZONE_ACTIVE_CHART` do API trả về, đối chiếu tên sao, Tứ Hóa bản mệnh và khoảng tuổi đại hạn với kiến thức chọn lọc từ mã nguồn. Khi thay lá số, câu trả lời tiếp theo dùng dữ liệu mới. Nếu chưa tạo lá số, bot yêu cầu tạo trước.
+Sau khi tạo lá số, mở **Trợ lý Tử Vi** và hỏi “Năm 2027 thế nào?”, “Tài vận năm 2027”,
+“Giàu cỡ nào?” hoặc “Luận giải lá số này”. Bot đọc đúng lá số đang mở; giữ chủ đề và
+năm gần nhất trong phiên trò chuyện. Đổi lá số hoặc xóa chat sẽ xóa ngữ cảnh này.
 
-Câu hỏi tài vận được trả lời bằng dữ liệu các cung Tài Bạch, Quan Lộc và Điền Trạch, kèm khoảng đại hạn tương ứng và từ khóa sao. Bot không xếp hạng mức giàu, không đồng nhất đại hạn Tài Bạch với đỉnh tài sản và không tự suy ra một năm phát tài từ Tứ Hóa bản mệnh. Các nguồn mã được ghim cùng commit engine `a600484a49255039d0725f1ba9e11ca81a948f97`.
+`POST /api/annual` nhận thông tin sinh và năm, tự tính lại lá số trên server rồi dùng
+`getLiuNianSiHua`, `getDaXianSiHua`, `getDaXianIndexForYear` của engine để xác định
+Tứ Hóa lưu niên, vị trí các sao và đại hạn. Năm được hiểu là **năm âm lịch, đổi vào Tết**;
+tuổi mụ lấy chênh lệch năm âm lịch sinh. Chưa gộp đầy đủ tiểu hạn, lưu tinh, tháng/ngày.
+API chỉ chấp nhận năm nguyên 1900–2200 và tuổi 1–125; không tin các vị trí sao client gửi.
+Có thể chạy `node scripts/smoke-annual.mjs [URL máy chủ]` để kiểm tra các ca này.
 
-Đây là chức năng phân tích theo quy tắc, không tự huấn luyện từ hội thoại, không gọi mô hình AI bên ngoài và không cần API key. Các liên kết nguồn và từ khóa sao không thay thế bộ luận giải v4.0 hay kiểm chứng dự báo. Nội dung hội thoại vẫn chỉ nằm trong trình duyệt.
+Chat không xuất liên kết kho mã hay chip dẫn nguồn. Thông báo bản quyền/giấy phép và
+nguồn gốc kỹ thuật vẫn giữ trong tài liệu repository và các tệp giấy phép upstream.
+Bot phân biệt câu hỏi mức tài sản với thời điểm tài vận, không định giá mức giàu bằng
+số tiền, không đồng nhất đại hạn Tài Bạch với đỉnh tài sản. Với trẻ nhỏ, câu trả lời ưu
+tiên học tập, chăm sóc và hỗ trợ gia đình. Nội dung là diễn giải văn hóa theo quy tắc;
+chưa kết nối mô hình ngôn ngữ, không tự huấn luyện/tự học từ hội thoại và không tải
+âm thầm kho dữ liệu ngoài. Để thêm khả năng AI mở cần một tích hợp mô hình và truy
+xuất dữ liệu riêng; không có API key hoặc dữ liệu được bịa ra trong bản này.
 
 ## Hướng dẫn triển khai Netlify
 
@@ -116,3 +130,12 @@ Không dùng database tạm trong môi trường phát triển để lưu thốn
 credential trên máy chủ và chỉ trả ba số tổng hợp, cache nội bộ 15 giây. Giao diện làm
 mới 30 giây/lần khi tab đang mở. Chưa cấu hình hoặc lỗi kết nối hiển thị dấu `—`,
 không tạo số liệu giả. Chưa có Umami thật/credential thì chưa xác nhận thu thập thực tế.
+
+## Nhận diện khi chia sẻ link
+
+Tiêu đề: **✓ AZONE STUDIO GENCHART**; mô tả: **✓ TỬ VI KHÔNG GIAN SỐNG**.
+Metadata Open Graph/Twitter có ở cả layout Next.js và trang HTML đích sau chuyển hướng.
+Ảnh chia sẻ `public/site/share-preview.png` có kích thước 1200×630. URL chính hiện là
+`https://tuvi-dun.vercel.app`; khi đổi tên miền cần cập nhật metadata trong hai nơi này.
+Tiêu đề in vẫn là **AZONE STUDIO 135 ĐỒNG QUANG**, được đặt khi bắt đầu in và khôi
+phục sau đó. Dịch vụ nhắn tin có thể giữ cache bản xem trước cũ sau khi triển khai.

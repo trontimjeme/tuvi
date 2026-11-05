@@ -1,7 +1,17 @@
 import type { Metadata } from 'next';
+const title = '✓ AZONE STUDIO GENCHART';
+const description = '✓ TỬ VI KHÔNG GIAN SỐNG';
+const site = 'https://tuvi-dun.vercel.app';
 export const metadata: Metadata = {
-  title: 'Tử Vi · Không gian sống Studio Azone',
-  description: 'Lập lá số Tử Vi Đẩu Số bằng thuật toán mã nguồn mở, tra cứu sao và cung.',
+  metadataBase: new URL(site),
+  title, description,
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website', locale: 'vi_VN', siteName: 'AZONE STUDIO', url: '/', title, description,
+    images: [{ url: '/site/share-preview.png', width: 1200, height: 630, alt: 'AZONE STUDIO GENCHART — TỬ VI KHÔNG GIAN SỐNG' }],
+  },
+  twitter: { card: 'summary_large_image', title, description, images: ['/site/share-preview.png'] },
+  icons: { icon: '/site/azone-emblem.svg' },
   robots: { index: true, follow: true },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

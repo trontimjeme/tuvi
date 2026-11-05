@@ -2,6 +2,8 @@
 import { generateChart } from '@/lib/ziwei/algorithm';
 import { calculateTrueSolarTime, resolveZiweiDayOffset, shiftGregorianDate } from '@/lib/ziwei/true-solar-time';
 import { Lunar } from 'lunar-javascript';
+import { getLiuNianSiHua, getDaXianSiHua, getYearBranchIndex } from '@/lib/ziwei/sihua';
+import { getDaXianIndexForYear } from '@/lib/ziwei/yunxian-context';
 
 const chiVN = ['Tý','Sửu','Dần','Mão','Thìn','Tỵ','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'];
 const stars: Record<string,string> = {
@@ -42,4 +44,24 @@ function mapChart(o:any){const x=inputToChart(o), chart=generateChart(x.birthInf
   return {chart:{palaces:p,mingGongBranch:chart.mingGongBranch,shenGongBranch:chart.shenGongBranch,wuxingJuName:chart.wuxingJuName,mingZhu:translate(chart.mingZhu||''),shenZhu:translate(chart.shenZhu||''),yinYangGender:chart.yinYangGender,lunarInfo:chart.lunarInfo,daXians:chart.daXians.map(z=>({startAge:z.startAge,endAge:z.endAge,palaceBranch:z.palaceBranch,palaceName:palaceVN(z.palaceName),stemIndex:z.stemIndex,siHua:z.siHua})),currentDaXianIndex:chart.currentDaXianIndex,currentAge:chart.currentAge,birthInfo:chart.birthInfo},params:{birthYear:x.birthInfo.year,month:x.birthInfo.month,day:x.birthInfo.day,hour:x.birthInfo.hour,gender:x.birthInfo.gender},meta:{...x,trueSolar:x.trueSolar,engine:'Renhuai123/ziwei-doushu · generateChart()'}};
 }
 
-export { mapChart };
+function mapAnnual(o:any, year:unknown){
+  if(typeof year!=='number'||!Number.isInteger(year)||year<1900||year>2200)throw err('Năm cần xem phải là số nguyên từ 1900 đến 2200.');
+  const chart=generateChart(inputToChart(o).birthInfo);
+  const age=year-chart.lunarInfo.lunarYear+1;
+  if(age<1||age>125)throw err('Năm cần xem phải từ năm sinh đến 125 tuổi mụ.');
+  const annual=getLiuNianSiHua(year), index=getDaXianIndexForYear(chart,year);
+  const dx=index>=0?chart.daXians[index]:null;
+  const labels={'禄':'Hóa Lộc','权':'Hóa Quyền','科':'Hóa Khoa','忌':'Hóa Kỵ'} as const;
+  const mapTransforms=(transforms:Record<keyof typeof labels,string>)=>Object.entries(transforms).map(([key,name])=>{
+    const palace=chart.palaces.find(p=>p.stars.some(s=>s.name===name));
+    return {type:key,label:labels[key as keyof typeof labels],star:translate(name),palace:palace?palaceVN(palace.name):null,branch:palace?chiVN[palace.branch]:null};
+  });
+  const stems=['Giáp','Ất','Bính','Đinh','Mậu','Kỷ','Canh','Tân','Nhâm','Quý'];
+  const dxTransforms=index>=0?getDaXianSiHua(chart,index):null;
+  return {year,yearName:stems[annual.stemIndex]+' '+chiVN[getYearBranchIndex(year)],age,
+    yearConvention:'lunar-year',transforms:mapTransforms(annual.transforms),
+    daXian:dx?{startAge:dx.startAge,endAge:dx.endAge,palace:palaceVN(dx.palaceName),transforms:dxTransforms?mapTransforms(dxTransforms.transforms):[]}:null,
+    childhood:age<(chart.daXians[0]?.startAge??0),
+    limits:'Tứ Hóa lưu niên và đại hạn; chưa tính đầy đủ tiểu hạn, lưu tinh, lưu tháng/ngày.'};
+}
+export { mapChart, mapAnnual };
