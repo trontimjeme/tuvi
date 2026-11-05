@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#123b32" />
   <meta name="description" content="Tử Vi AZONE STUDIO v1.0.10: lập lá số bằng mã nguồn gốc và tra dữ liệu luận giải Code v4.0 theo năm." />
-  <title>Tử Vi — Bản demo giao diện v1.0.10 · Trợ lý Tử Vi</title>
+  <title>AZONE STUDIO 135 ĐỒNG QUANG</title>
   <style>
     :root{--page:#f8f7f2;--surface:#fffefa;--surface2:#f4f1e9;--muted:#f5f4ee;--green:#173e34;--forest:#0e332a;--forest2:#214b3f;--ink:#233a33;--body:#425850;--light:#6f8079;--line:#e7e5d9;--gold:#b78b47;--goldlight:#eadabb;--accent:#cc9f59;--shadow:0 18px 45px rgba(32,54,46,.07);--radius:18px}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--page);font-family:"Segoe UI","Noto Sans",Arial,sans-serif;font-size:14px;line-height:1.52;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(183,139,71,.48);outline-offset:3px}svg{display:block;flex-shrink:0}img{max-width:100%}.serif{font-family:"Noto Serif",Cambria,"Times New Roman",serif}.app{min-height:100vh;display:grid;grid-template-columns:268px minmax(0,1fr)}
@@ -184,6 +184,26 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
  #chartBoard{position:absolute;left:0;top:0;width:190mm;min-width:0;max-width:none;height:268.7mm;aspect-ratio:210/297;grid-template-rows:repeat(4,minmax(0,1fr));break-inside:avoid}
  .chart-board .palace{padding:10px 8px}.chart-board .palace .stars span{font-size:12px}.chart-board .palace .stars span.secondary{font-size:10px}
 }
+
+.print-studio{display:none}
+#birthdateHint{display:block;color:var(--light);font-size:10px;margin-top:6px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.calendar-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.calendar-toolbar button,.calendar-toolbar select,.calendar-toolbar input{border:1px solid var(--line);border-radius:7px;padding:7px;background:var(--surface);color:var(--ink);font-size:12px}
+.calendar-toolbar input{width:72px}.calendar-toolbar button{cursor:pointer}.calendar-toolbar button:disabled{opacity:.4;cursor:default}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.calendar-weekday{text-align:center;color:var(--light);font-size:10px;padding:6px 0}
+.calendar-day{border:1px solid transparent;border-radius:7px;background:var(--surface);color:var(--ink);padding:7px 1px;cursor:pointer;min-width:0}
+.calendar-day strong,.calendar-day small{display:block}.calendar-day strong{font-size:13px}.calendar-day small{font-size:9px;color:var(--light);margin-top:3px}
+.calendar-day.sunday strong{color:#bb6258}.calendar-day.today{border-color:#b9a06b}.calendar-day[aria-pressed="true"]{background:#e2eee0;border-color:#548367;color:#244d38}.calendar-day[aria-pressed="true"] small{color:#43614b}
+.calendar-day:hover{box-shadow:inset 0 0 0 1px #92aa8b}.calendar-detail{font-size:12px;line-height:1.8;color:var(--ink);margin:14px 0 8px}.calendar-source{font-size:10px;line-height:1.8;color:var(--light)}
+@media print{.print-studio{display:block;position:absolute;bottom:8px;left:0;right:0;color:#ccc;font-size:8px;letter-spacing:.07em}}
+
+.traffic-stats{margin-bottom:14px;padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);max-width:540px}
+.traffic-heading{display:flex;align-items:center;gap:7px;color:var(--ink);font-size:12px}
+.traffic-dot{width:7px;height:7px;border-radius:50%;background:#a2aaa3}.traffic-ready .traffic-dot{background:#53b28c;box-shadow:0 0 7px #53b28c50}
+.traffic-counters{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}.traffic-counters div{display:flex;flex-direction:column;gap:1px}.traffic-counters b{color:var(--ink);font-size:21px;line-height:1.4;font-variant-numeric:tabular-nums}.traffic-counters span{font-size:10px;color:var(--light)}.traffic-counters small{font-size:9px}.traffic-status{font-size:9px;margin:8px 0 0;color:var(--light)}
+@media(max-width:600px){.traffic-stats{padding:12px}.traffic-counters{gap:18px}}
 </style>
   <link rel="stylesheet" href="agent.css" />
 </head>
@@ -237,7 +257,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
       <form class="form-content" id="birthForm"><div class="field"><label for="name">Họ và tên <span style="font-weight:400;color:#a7ada7">(không bắt buộc)</span></label><input id="name" maxlength="60" autocomplete="name" placeholder="Nhập tên của bạn" value=""/></div>
       <div class="field"><label>Giới tính</label><div class="segmented" id="gender"><button type="button" class="active" data-gender="male">Nam</button><button type="button" data-gender="female">Nữ</button></div></div>
       <div class="field"><label>Loại lịch</label><div class="segmented" id="calendar"><button type="button" class="active" data-calendar="solar">Dương lịch</button><button type="button" data-calendar="lunar">Âm lịch</button></div></div>
-      <div class="field"><label for="birthdate">Ngày / tháng / năm sinh</label><input id="birthdate" type="date" value="1992-08-15" min="1900-01-01" max="2026-12-31" required/></div>
+      <div class="field"><label for="birthdate">Ngày / tháng / năm sinh</label><input id="birthdate" type="text" inputmode="numeric" value="15/08/1992" placeholder="DD/MM/YYYY" maxlength="10" pattern="[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}" aria-describedby="birthdateHint" required/><small id="birthdateHint">Nhập ngày/tháng/năm, ví dụ: 24/05/2026</small></div>
       <div class="flexrow"><div class="field"><label for="birthtime">Giờ sinh</label><input id="birthtime" type="time" value="08:30" required/></div><div class="field"><label for="birthplace">Nơi sinh</label><select id="birthplace"><option value="">Chọn tỉnh / thành</option><option value="Thái Nguyên" selected>Thái Nguyên</option><option>Hà Nội</option><option>Bắc Ninh</option><option>Hải Phòng</option><option>Đà Nẵng</option><option>Huế</option><option>TP. Hồ Chí Minh</option><option>Cần Thơ</option><option>Tỉnh / thành khác</option></select></div></div>
       <div class="helpbox" id="calendarHelp"><span class="hmark">ⓘ</span><div>Máy chủ trực tuyến sử dụng thuật toán Code gốc. Ngày âm lịch được quy đổi trước khi an sao. Nếu chọn tỉnh thành Việt Nam, giờ mặt trời dùng kinh độ địa phương và múi giờ UTC+7.</div></div>
       <label class="leap-field" id="leapField" hidden><input type="checkbox" id="leapMonth"> Sinh vào tháng nhuận (âm lịch)</label>
@@ -247,7 +267,9 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     </div>
     <div class="panel"><div class="chart-wrap"><div class="chart-tools"><div class="tabs" id="chartTabs"><button class="active" data-layer="goc">Bản mệnh</button><button data-layer="daihan">Đại hạn</button><button data-layer="luunien">Lưu niên</button></div><div class="chart-actions"><button class="subtle-btn on" id="triangleBtn">◇ Tam phương tứ chính</button><button class="subtle-btn" id="samplePrint">↗ In thử</button></div></div><div class="sample-banner">CHỜ NHẬP NGÀY SINH — NHẤN “TẠO LÁ SỐ TỬ VI” ĐỂ TÍNH TOÁN</div><div class="mobile-hint">↔ Vuốt ngang để xem toàn bộ 12 cung</div><div class="chart-scroll"><div class="chart-board" id="chartBoard" aria-label="Sơ đồ mười hai cung"></div></div><div class="chart-footnote"><div class="legend-text"><span class="legend"><i></i> Cung đang chọn</span><span class="legend"><i class="b"></i> Cung liên hệ</span></div><span id="layerLabel">Chế độ hiển thị: chờ lập lá số</span></div></div></div>
   </div>
-  <div class="below-grid"><div class="panel"><div class="panel-title"><div><h3>Khám phá từng cung</h3><p>Chọn một cung trên lá số để xem vai trò tổng quát</p></div><span class="head-icon">✧</span></div><div class="detail-content"><div class="detail-intro"><div class="detail-emblem">宮</div><div><h4 id="activePalaceName">Cung Mệnh</h4><p id="activePalaceBranch">Vị trí: Tỵ · Chưa có dữ liệu sinh</p></div></div><p class="detail-text" id="activePalaceText">Cung Mệnh thường được dùng làm điểm khởi đầu khi tìm hiểu cấu trúc lá số Tử Vi Đẩu Số. Việc luận đoán chính thức phải dựa trên các sao và toàn bộ thế liên kết của lá số đã tính.</p><div class="taglist"><span>Vai trò của cung</span><span>Tam phương tứ chính</span><span>Chính tinh &amp; phụ tinh</span></div></div></div><div class="panel source-card"><div class="panel-title"><div><h3>Phương pháp &amp; dữ liệu</h3><p>Đang kết nối thuật toán mã nguồn mở</p></div><span class="head-icon">⌘</span></div><div class="detail-content"><p class="detail-text">Tính lá số bằng <b>generateChart()</b> của kho mã nguồn gốc; bảo toàn quy tắc giờ Tý, tháng nhuận, Tứ Hóa và khả năng hiệu chỉnh giờ mặt trời thực.</p><p class="detail-text" style="margin-top:12px">Nguồn: <a href="https://github.com/Renhuai123/ziwei-doushu" target="_blank" rel="noopener">Renhuai123/ziwei-doushu ↗</a><br>Vị trí sao sẽ được tính trên máy chủ Next.js sau khi triển khai trực tuyến.</p></div></div></div>
+  <div class="below-grid"><div class="panel"><div class="panel-title"><div><h3>Khám phá từng cung</h3><p>Chọn một cung trên lá số để xem vai trò tổng quát</p></div><span class="head-icon">✧</span></div><div class="detail-content"><div class="detail-intro"><div class="detail-emblem">宮</div><div><h4 id="activePalaceName">Cung Mệnh</h4><p id="activePalaceBranch">Vị trí: Tỵ · Chưa có dữ liệu sinh</p></div></div><p class="detail-text" id="activePalaceText">Cung Mệnh thường được dùng làm điểm khởi đầu khi tìm hiểu cấu trúc lá số Tử Vi Đẩu Số. Việc luận đoán chính thức phải dựa trên các sao và toàn bộ thế liên kết của lá số đã tính.</p><div class="taglist"><span>Vai trò của cung</span><span>Tam phương tứ chính</span><span>Chính tinh &amp; phụ tinh</span></div></div></div><section class="panel source-card calendar-card" aria-label="Lịch vạn niên Việt Nam"><div class="panel-title"><div><h3>Lịch vạn niên</h3><p>Âm – dương lịch Việt Nam · UTC+7</p></div><span class="head-icon">▦</span></div><div class="detail-content">
+<div class="calendar-toolbar"><button type="button" id="calendarPrev" aria-label="Tháng trước">‹</button><label><span class="sr-only">Tháng</span><select id="calendarMonth" aria-label="Tháng lịch"></select></label><label><span class="sr-only">Năm</span><input id="calendarYear" type="number" min="1900" max="2100" aria-label="Năm lịch"></label><button type="button" id="calendarNext" aria-label="Tháng sau">›</button><button type="button" id="calendarToday">Hôm nay</button></div>
+<div id="calendarGrid" class="calendar-grid" aria-label="Ngày trong tháng"></div><p id="calendarDetail" class="calendar-detail" role="status" aria-live="polite">Đang tải lịch…</p></div></section></div>
 </section>
 <section id="view-reading" class="page-view" hidden><div class="page-heading"><span class="small-label">13 CHUYÊN ĐỀ LUẬN GIẢI</span><h1>Luận giải lá số</h1><p>Bố cục nội dung theo đúng 13 nhóm chủ đề của bộ dữ liệu luận giải v4.0. Lựa chọn chủ đề để xem cách trình bày và nguyên tắc viện dẫn nguồn.</p></div><div class="topic-grid" id="topics"></div><div class="readout"><div class="panel reader"><span class="small-label">DỮ LIỆU LUẬN GIẢI TỪ Code RELEASE v4.0</span><h3 id="topicTitle">Tổng quan lá số</h3><p id="topicDesc">Lập lá số trước, sau đó nhấn tải dữ liệu luận giải để tra cứu đúng bản ghi theo năm sinh.</p><div class="note"><b>Dữ liệu theo từng năm:</b> tải trực tiếp bản nén <b>year-YYYY.jsonl.zst</b> (~2 MB), kiểm tra SHA-256 và giải nén theo luồng để tìm lá số phù hợp. Không cần tải nguyên bộ hơn 56 GB. Dữ liệu năm 1950–2026; nội dung chỉ mang tính tham khảo văn hóa.</div>
       <button id="loadReading" class="primary-btn load-reading" type="button">⬇ Tải &amp; giải nén luận giải của lá số</button>
@@ -256,7 +278,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
 <section id="view-knowledge" class="page-view" hidden><div class="page-heading"><span class="small-label">TRA CỨU KIẾN THỨC TỬ VI</span><h1>Kho tri thức Đẩu Số</h1><p>Tra cứu 14 chính tinh theo tên gọi tiếng Việt. Nội dung tham khảo sẽ được đối chiếu với kho dữ liệu và văn bản nguồn trong giai đoạn triển khai chính thức.</p></div><label class="searchbar"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input type="search" id="starSearch" placeholder="Tìm tên sao: Tử Vi, Thiên Cơ, Thái Dương..." aria-label="Tìm tên sao"/></label><div class="star-grid" id="starGrid"></div><div class="panel knowledge-detail" id="starDetail"><span class="small-label">THÔNG TIN THUẬT NGỮ</span><div style="margin-top:7px"><strong id="starTitle">Sao Tử Vi</strong></div><p id="starDescription">Tử Vi là một trong 14 chính tinh của hệ thống Tử Vi Đẩu Số. Khi xem một sao cần xét vị trí cung, độ sáng, các sao đồng cung, hội chiếu và hệ thống Tứ Hóa theo trường phái sử dụng.</p><div class="taglist"><span>Vị trí cung</span><span>Miếu · Vượng · Đắc · Hãm</span><span>Tứ Hóa</span></div></div></section>
 <section id="view-library" class="page-view" hidden><div class="page-heading"><span class="small-label">TƯ LIỆU CỔ &amp; NGUỒN THAM KHẢO</span><h1>Thư viện cổ thư</h1><p>Không gian đọc và tra cứu nguyên điển được thiết kế song ngữ theo hướng: tên sách tiếng Việt, bảo tồn nguyên văn để đối chiếu khi có quyền sử dụng phù hợp.</p></div><div class="books"><button class="book-card" data-book="Tử Vi Đẩu Số Toàn Thư"><div class="book-art">書</div><h3>Tử Vi Đẩu Số Toàn Thư</h3><p>Tác phẩm cổ điển trong thư mục mã nguồn. Phiên bản chính thức sẽ có bản dịch Việt và nút đối chiếu nguyên văn.</p><span class="book-link">Xem cấu trúc đọc thử ↗</span></button><button class="book-card" data-book="Tử Vi Đẩu Số Toàn Tập"><div class="book-art">典</div><h3>Tử Vi Đẩu Số Toàn Tập</h3><p>Tra cứu theo chương mục, hỗ trợ tìm thuật ngữ và đối chiếu các dẫn chứng cổ thư.</p><span class="book-link">Xem cấu trúc đọc thử ↗</span></button><button class="book-card" data-book="Cốt Tủy Phú"><div class="book-art">卷</div><h3>Cốt Tủy Phú</h3><p>Nhóm văn bản cổ được đưa vào danh mục thư viện để tiện tra cứu câu phú và chú giải.</p><span class="book-link">Xem cấu trúc đọc thử ↗</span></button></div><div class="library-info" id="bookDetail"><strong>Chọn một đầu sách</strong> để xem cách trình bày thư viện. Demo này không sao chép nội dung sách hay trích dẫn giảng dạy chưa được phép.<br><br><strong>Giấy phép:</strong> mã nguồn áp dụng MIT; bộ dữ liệu mẫu/luận giải áp dụng CC BY 4.0 (yêu cầu ghi công); các đoạn trích bài giảng có điều khoản riêng CC BY-NC-SA 4.0. <a href="https://github.com/Renhuai123/ziwei-doushu" target="_blank" rel="noopener">Kiểm tra nguồn tại Code ↗</a></div></section>
 </main>
-<footer class="footer"><div>© 2026 · TỬ VI — PHIÊN BẢN WEB ONLINE v1.0.10. <b>Không phải công cụ tiên đoán.</b><br>Thông tin Tử Vi mang tính tham khảo văn hóa, không thay thế tư vấn sức khỏe, tài chính hoặc pháp lý.</div><div class="footer-design-credit">Bản thiết kế <b>Design By Không Gian Sống AZONE STUDIO</b><br>Liên hệ: <a href="tel:+84911155919">09111 55919</a> · Luận giải v4.0 tải theo yêu cầu từng năm.<br>Thông tin nguồn và giấy phép được trình bày tại mục <a href="#thu-vien" data-go="library">Thư viện</a>.</div></footer>
+<footer class="footer"><div><section class="traffic-stats" id="trafficStats" aria-label="Thống kê truy cập"><div class="traffic-heading"><span class="traffic-dot" aria-hidden="true"></span><strong>Thống kê truy cập</strong></div><div class="traffic-counters"><div><b data-stat="active">—</b><span>Đang online <small>(5 phút)</small></span></div><div><b data-stat="visitors">—</b><span>Khách hôm nay</span></div><div><b data-stat="views">—</b><span>Lượt xem hôm nay</span></div></div><p class="traffic-status" role="status">Đang kết nối thống kê…</p></section>© 2026 · TỬ VI — PHIÊN BẢN WEB ONLINE v1.0.10. <b>Không phải công cụ tiên đoán.</b><br>Thông tin Tử Vi mang tính tham khảo văn hóa, không thay thế tư vấn sức khỏe, tài chính hoặc pháp lý.</div><div class="footer-design-credit">Bản thiết kế <b>Design By Không Gian Sống AZONE STUDIO</b><br>Liên hệ: <a href="tel:+84911155919">09111 55919</a> · Luận giải v4.0 tải theo yêu cầu từng năm.<br>Thông tin nguồn và giấy phép được trình bày tại mục <a href="#thu-vien" data-go="library">Thư viện</a>.</div></footer>
 </div></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -328,7 +350,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     }
     let center=document.createElement('div');center.className='chart-center';
     if(computedChart){
-      const L=computedChart.lunarInfo;center.innerHTML=`<div class="center-emblem"><img src="/site/azone-emblem.svg" alt="AZONE"></div><div class="center-brand">LÁ SỐ TỬ VI</div><div class="center-separator"></div><div class="center-line"><strong id="viewPerson"></strong><br>Âm lịch: ${wordSafe(L.lunarDay)}/${wordSafe(L.lunarMonth)}/${wordSafe(L.lunarYear)}<br>${wordSafe(computedChart.wuxingJuName||'')}<br>Mệnh: ${wordSafe(sample.find(p=>p.branch===computedChart.mingGongBranch)?.chi||'')} · Thân: ${wordSafe(sample.find(p=>p.branch===computedChart.shenGongBranch)?.chi||'')}</div><img class="center-watermark" src="/site/azone-watermark.png" alt="AZONE STUDIO — Architecture &amp; Design" width="230" height="58">`;
+      const L=computedChart.lunarInfo;center.innerHTML=`<div class="center-emblem"><img src="/site/azone-emblem.svg" alt="AZONE"></div><div class="center-brand">LÁ SỐ TỬ VI</div><div class="print-studio">AZONE STUDIO 135 ĐỒNG QUANG</div><div class="center-separator"></div><div class="center-line"><strong id="viewPerson"></strong><br>Âm lịch: ${wordSafe(L.lunarDay)}/${wordSafe(L.lunarMonth)}/${wordSafe(L.lunarYear)}<br>${wordSafe(computedChart.wuxingJuName||'')}<br>Mệnh: ${wordSafe(sample.find(p=>p.branch===computedChart.mingGongBranch)?.chi||'')} · Thân: ${wordSafe(sample.find(p=>p.branch===computedChart.shenGongBranch)?.chi||'')}</div><img class="center-watermark" src="/site/azone-watermark.png" alt="AZONE STUDIO — Architecture &amp; Design" width="230" height="58">`;
       center.querySelector('#viewPerson').textContent=currentBirthName || 'Lá số cá nhân';
     }else center.innerHTML='<div class="center-emblem"><img src="/site/azone-emblem.svg" alt="AZONE"></div><div class="center-brand">TỬ VI ĐẨU SỐ</div><div class="center-separator"></div><div class="center-line">Sơ đồ minh họa <strong>12 cung</strong><br>Nhập ngày sinh để tính thật<br>Chưa kết nối dữ liệu cá nhân</div><div class="center-demo">CHỜ LẬP LÁ SỐ</div>';
     $('#chartBoard').appendChild(center);
@@ -387,8 +409,19 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     $('#topicDesc').classList.toggle('reading-text',!!val);
     $('#topicDesc').textContent=val?String(val):readingData?'Không có nội dung chủ đề này trong bản ghi dữ liệu.':'Lập lá số và nhấn “Tải & giải nén luận giải” để đọc dữ liệu đã xác thực từ Code.';
   }
+  $('#birthdate').addEventListener('input',e=>e.target.setCustomValidity(''));
   $('#birthForm').addEventListener('submit',async e=>{
-    e.preventDefault();const date=$('#birthdate').value,time=$('#birthtime').value;if(!date||!time)return;
+    e.preventDefault();
+    const dateInput=$('#birthdate'),parts=dateInput.value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/),time=$('#birthtime').value;
+    if(!parts||!time)return;
+    const [,dd,mm,yyyy]=parts,year=Number(yyyy),month=Number(mm),day=Number(dd);
+    const isLunar=$('#calendar button.active').dataset.calendar==='lunar';
+    const check=new Date(Date.UTC(year,month-1,day));
+    if(year<1900||year>2100||month<1||month>12||day<1||day>(isLunar?30:31)||(!isLunar&&(check.getUTCMonth()!==month-1||check.getUTCDate()!==day))){
+      dateInput.setCustomValidity('Ngày sinh không hợp lệ. Nhập ngày/tháng/năm, năm 1900–2100.');dateInput.reportValidity();return;
+    }
+    const date=`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+    dateInput.value=`${dd.padStart(2,'0')}/${mm.padStart(2,'0')}/${yyyy}`;
     const btn=$('#birthForm button[type="submit"]');btn.disabled=true;btn.textContent='Đang tính lá số…';
     $('#engineStatus').className='engine-status waiting';$('#engineStatus').textContent='Đang lập lá số qua hệ thống trực tuyến…';
     const request={name:$('#name').value.trim(),birthdate:date,birthtime:time,birthplace:$('#birthplace').value,gender:$('#gender button.active').dataset.gender,calendar:$('#calendar button.active').dataset.calendar,leapMonth:$('#leapMonth').checked};
@@ -399,7 +432,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
       sample=fromChart(computedChart);selected=computedChart.mingGongBranch;layer='goc';
       readingData=null;renderReading();$('#readingStatus').textContent='Lá số đã lập. Nhấn “Tải & giải nén luận giải” ở mục Luận giải để nạp dữ liệu năm '+computedParams.birthYear+'.';
       $$('#chartTabs button').forEach(b=>b.classList.toggle('active',b.dataset.layer==='goc'));
-      const banner=document.querySelector('.sample-banner');banner.classList.add('real-chart');banner.textContent='✓ LÁ SỐ THẬT — TÍNH BỞI generateChart() · Nguồn Renhuai123/ziwei-doushu';
+      const banner=document.querySelector('.sample-banner');banner.classList.add('real-chart');banner.textContent='✓ AZONE STUDIO GENCHART';
       $('#engineStatus').className='engine-status';$('#engineStatus').textContent='✓ Tính xong 12 cung. Giờ mặt trời: '+data.meta.trueSolar.clock+' · '+(data.meta.trueSolar.corrected?'đã hiệu chỉnh kinh độ':'không có dữ liệu kinh độ')+' · ngày an sao '+computedParams.day+'/'+computedParams.month+'/'+computedParams.birthYear+'.';
       draw();$('#lap-la-so').scrollIntoView({behavior:'smooth',block:'start'});toast('Đã tạo lá số thật bằng bộ máy Code!');
     }catch(e){$('#engineStatus').className='engine-status offline';$('#engineStatus').textContent='Không tạo được lá số: '+e.message;toast('Lỗi: '+e.message);}
@@ -430,6 +463,8 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
   draw();drawTopics();drawStars();renderReading();statusCheck();let initial=pathMap[location.hash.slice(1)]||'home';go(initial);
 })();
 </script>
+<script src="vietnamese-calendar.js" defer></script>
 <script src="agent.js" defer></script>
+<script src="analytics.js" defer></script>
 </body>
 </html>

@@ -78,3 +78,41 @@ Nguồn: https://github.com/Renhuai123/ziwei-doushu
 ### Tên nguồn trong giao diện
 
 Website và Bot hiển thị nhãn **Code** thay cho nhãn tên nền tảng lưu trữ. Các URL `github.com` và chỉ dẫn **Import from GitHub** trong hướng dẫn cài đặt vẫn được giữ nguyên vì đó là tên và địa chỉ kỹ thuật thực tế; thay chúng sẽ làm hỏng liên kết hoặc gây nhầm thao tác.
+
+## Lịch vạn niên và định dạng ngày Việt Nam
+
+Ô ngày sinh nhập `DD/MM/YYYY` rồi chuyển sang ISO khi gọi API tạo lá số. Khung lịch
+vạn niên cho chọn tháng/năm, xem ngày âm và tháng nhuận theo UTC+7. Phần chuyển đổi
+được tích hợp từ [hnthap/lunar-calendar-api](https://github.com/hnthap/lunar-calendar-api)
+(MIT), ghim commit và giữ giấy phép tại `lib/vietnamese-calendar/vendor/`.
+Không gọi API công cộng bên ngoài; phần lịch này độc lập với engine an sao.
+
+Sau khi chạy ứng dụng, kiểm tra các mốc Tết, tháng nhuận và múi giờ Việt Nam bằng
+`node scripts/smoke-calendar.mjs` (hoặc truyền URL máy chủ làm tham số đầu tiên).
+Tiêu đề trang và tên trên bản in: **AZONE STUDIO 135 ĐỒNG QUANG**.
+
+## Thống kê truy cập Umami
+
+Chân trang dùng tracker và API chính thức của [umami-software/umami](https://github.com/umami-software/umami).
+Hiển thị khách hoạt động trong **5 phút gần nhất**, khách và lượt xem **hôm nay theo UTC+7**.
+“Online” là cửa sổ hoạt động của Umami, không phải kết nối trực tuyến chính xác từng giây.
+Không gửi tên, ngày/giờ/nơi sinh hoặc dữ liệu lá số tới Umami. Query/hash bị loại khỏi
+URL theo dõi; tôn trọng Do Not Track. Chặn quảng cáo/DNT có thể khiến thống kê thiếu.
+
+Để bật trên Vercel/Netlify, cấu hình trong Environment Variables/Secrets rồi redeploy:
+
+- `UMAMI_URL`: URL HTTPS của máy chủ Umami, không kèm `/script.js` hoặc `/api`.
+- `UMAMI_WEBSITE_ID`: UUID website đã thêm trong Umami, đặt domain đúng website triển khai.
+- `UMAMI_API_TOKEN`: API key/Bearer token đọc website đó, **chỉ trên server**.
+
+Mã được đối chiếu với Umami 3.4.1, commit `559e3c607c23d2c72d9bd4f6481bda428255323c`;
+phần đọc số liệu hỗ trợ cả định dạng `{ value }` của Umami 2. Tích hợp này nhắm tới
+Umami self-hosted; Umami Cloud có endpoint/cách xác thực riêng cần cấu hình bổ sung.
+Nếu chưa có máy chủ, triển khai repo Umami với PostgreSQL theo README chính thức,
+tạo tài khoản/đổi mật khẩu mặc định và thêm website trước khi cấu hình ba biến trên.
+Không dùng database tạm trong môi trường phát triển để lưu thống kê website công khai.
+
+`/api/analytics/config` chỉ trả cấu hình tracker công khai; `/api/analytics/stats` giữ
+credential trên máy chủ và chỉ trả ba số tổng hợp, cache nội bộ 15 giây. Giao diện làm
+mới 30 giây/lần khi tab đang mở. Chưa cấu hình hoặc lỗi kết nối hiển thị dấu `—`,
+không tạo số liệu giả. Chưa có Umami thật/credential thì chưa xác nhận thu thập thực tế.
