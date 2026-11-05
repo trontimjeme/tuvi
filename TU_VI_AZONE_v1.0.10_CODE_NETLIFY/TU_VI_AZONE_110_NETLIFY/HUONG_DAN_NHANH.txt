@@ -1,0 +1,23 @@
+TỬ VI · AZONE STUDIO v1.0.10 WEB ONLINE
+====================================
+
+Bản này là DỰ ÁN NEXT.JS, KHÔNG phải ZIP website tĩnh có thể kéo thả lên Netlify.
+
+1. Giải nén ZIP.
+2. Tạo 1 repository GitHub riêng, đưa TOÀN BỘ FILE trong thư mục này lên gốc repository.
+3. Netlify > Add new project > Import from GitHub > chọn repository.
+4. Build command: npm run build ; Publish directory: .next ; Node.js: 22.
+5. Chờ Netlify build. Khi mở web, kiểm tra /api/status phải có ready:true.
+6. Mở trang chủ -> TẠO LÁ SỐ TỬ VI và kiểm tra các cung sao.
+7. Luận giải: gọi dữ liệu v4.0 theo năm từ GitHub, tính năng thử nghiệm có nguy cơ timeout.
+
+Bộ mã lập lá số gốc được tải lúc BUILD theo commit GitHub cố định,
+không tải 56,6GB dữ liệu về website. Để vận hành dữ liệu luận giải ổn định,
+cần triển khai PostgreSQL / kho tìm kiếm được lập chỉ mục riêng.
+
+Tài liệu chi tiết: README.md
+Nguồn: https://github.com/Renhuai123/ziwei-doushu
+
+LƯU Ý: Chưa chạy được npm install + build Netlify thực tế trong môi trường hiện tại.
+Kiểm thử giao diện dùng dữ liệu API giả lập, không phải lá số gốc.
+Không làm thay đổi website AZONE STUDIO hiện tại.
