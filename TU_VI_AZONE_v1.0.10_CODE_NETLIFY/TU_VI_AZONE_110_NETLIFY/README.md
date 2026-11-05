@@ -9,7 +9,7 @@
 - Trang web tiếng Việt, 12 cung, 14 chính tinh, chuyển trang, giao diện neon và quảng cáo AZONE STUDIO.
 - `POST /api/chart`: nhập sinh, tính lá số bằng hàm `generateChart()` gốc từ kho [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu) tại commit `a600484a49255039d0725f1ba9e11ca81a948f97`.
 - `GET /api/status`: trạng thái API.
-- `POST /api/interpret`: tra cứu luận giải v4.0 bằng cách tải **một tệp theo năm**, kiểm tra SHA-256 và giải nén theo luồng `fzstd`. Đây là chế độ thử nghiệm tài nguyên lớn, có thể bị timeout trên Netlify; không nên dùng cho tải cao trước khi lập chỉ mục trong cơ sở dữ liệu riêng.
+- `POST /api/interpret`: tra cứu luận giải v4.0 bằng cách tải **một tệp theo năm**, kiểm tra SHA-256 và giải nén Zstandard theo luồng bằng Node.js >=22.15. Đây là chế độ thử nghiệm tài nguyên lớn, có thể bị timeout trên Netlify; không nên dùng cho tải cao trước khi lập chỉ mục trong cơ sở dữ liệu riêng.
 - Bot tra cứu trên giao diện đọc bảng sao, cung từ mã nguồn đã đối chiếu; Bot có thể đọc vị trí sao vừa lập ở trình duyệt. **Không phải mô hình ngôn ngữ và không được huấn luyện trên 56,6 GB dữ liệu.**
 
 ## Bot đọc lá số và xem theo năm
@@ -139,3 +139,42 @@ Metadata Open Graph/Twitter có ở cả layout Next.js và trang HTML đích sa
 `https://tuvi-dun.vercel.app`; khi đổi tên miền cần cập nhật metadata trong hai nơi này.
 Tiêu đề in vẫn là **AZONE STUDIO 135 ĐỒNG QUANG**, được đặt khi bắt đầu in và khôi
 phục sau đó. Dịch vụ nhắn tin có thể giữ cache bản xem trước cũ sau khi triển khai.
+
+
+## Luận giải từ bản ghi gốc
+
+Sau khi tạo lá số thành công, nút **Luận giải** xuất hiện ngay dưới nút tạo lá số.
+Nút lấy bản ghi đúng ngày dương lịch/giờ địa chi/giới tính đã được engine hiệu chỉnh,
+kiểm tra SHA-256 của tệp năm trước khi giải nén và kiểm tra đủ 13 chủ đề. Không tìm
+thấy bản ghi thì báo rõ, không dùng bản gần giống. Bản gốc 1950–2026 giữ nguyên tiếng
+Trung. Giao diện ghi **chưa có bản dịch tiếng Việt** khi chưa có dịch vụ dịch.
+
+Giải nén dùng Zstandard native, yêu cầu **Node >=22.15** (Node 24 cũng được), cửa sổ
+128 MB theo hướng dẫn phát hành. Cache chỉ giữ tối đa 12 bản ghi; không nạp cả 700 MB
+văn bản giải nén vào RAM. Việc tải lần đầu còn phụ thuộc truy cập bộ phát hành và tài
+nguyên serverless; khi lưu lượng lớn nên lập chỉ mục dữ liệu ngoài thay vì giải nén lại.
+Trong cloud sandbox có HTTP proxy, Node 24 có thể cần `NODE_USE_ENV_PROXY=1` lúc chạy;
+không tắt kiểm tra TLS hoặc checksum.
+
+Dịch tiếng Việt hiện **chưa bật** theo lựa chọn người dùng. Adapter tùy chọn dùng
+`TRANSLATION_API_KEY`, `TRANSLATION_API_URL`, `TRANSLATION_MODEL` (mẫu trong `.env.example`).
+Mỗi lần chỉ dịch chủ đề đang chọn, gửi nguyên văn chủ đề chứ không gửi trường tên/ngày
+sinh. Bản dịch máy được tách khỏi nguyên bản và không được nhận là đã có người duyệt.
+Bot chỉ trích bản dịch khi thuộc đúng lá số/chủ đề; nếu chưa dịch, bot nói rõ phần trả
+lời tiếng Việt là diễn giải quy tắc riêng. Chat lọc các URL GitHub ở cả câu trả lời,
+lỗi API và phần hiển thị câu hỏi; không tạo liên kết bấm được.
+
+Kiểm thử: `node --experimental-strip-types --test scripts/test-interpret.mjs`.
+Giữ nguồn và giấy phép của bộ dữ liệu trong tài liệu này và `UPSTREAM-DATASET-LICENSE`;
+không xóa thông báo tác giả/giấy phép khỏi bản gốc.
+
+### Dịch thủ công qua trình duyệt / Google
+
+Sau khi tải bản ghi gốc, thanh công cụ cho copy toàn bộ chủ đề, bôi đen văn bản để
+sử dụng menu dịch gốc của trình duyệt, hoặc mở Google Dịch Trung → Việt. Ứng dụng
+không can thiệp menu chuột phải. Chỉ đoạn đang chọn trong nội dung luận giải mới
+được lấy làm lựa chọn; không lấy phần bôi đen ở khu vực khác. Với URL ngắn, đoạn đó
+được điền trực tiếp; với văn bản dài, copy nguyên văn và mở Google để người dùng dán,
+không cắt mất nội dung hoặc tạo URL quá dài. Clipboard bị chặn thì hướng dẫn Copy
+thủ công. Google chỉ nhận nội dung khi người dùng chủ động bấm mở dịch; kết quả dịch
+bên ngoài không được ứng dụng nhận là bản dịch đã duyệt.

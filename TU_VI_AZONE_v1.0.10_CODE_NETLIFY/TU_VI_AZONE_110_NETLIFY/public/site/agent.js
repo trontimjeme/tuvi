@@ -76,12 +76,20 @@
     const clock=Number.isInteger(o.clockHour)?` ${String(o.clockHour).padStart(2,'0')}:${String(o.clockMinute||0).padStart(2,'0')}`:'';
     return `Đang đọc lá số ${b.gender==='male'?'nam':b.gender==='female'?'nữ':''} sinh ${date}${clock}.`;
   }
+  function hideRepositoryLinks(value){
+    return String(value).replace(/\[([^\]]+)\]\(([^)]+)\)/g,(full,label,url)=>/(?:github\.com|githubusercontent\.com|github\.io|githubassets\.com)/i.test(url)?label:full)
+      .replace(/(?:https?:\/\/|www\.|git@)?(?:[a-z0-9-]+\.)*(?:github\.com|githubusercontent\.com|github\.io|githubassets\.com)(?::|\/)?[^\s<>"']*/gi,'[liên kết đã ẩn]');
+  }
   function personalReply(chart,kind,question=''){
     if(!chart||!Array.isArray(chart.palaces)||chart.palaces.length!==12)return answer('Hãy tạo lá số trước bằng ngày, giờ sinh và giới tính. Tôi chỉ đọc dữ liệu của lá số đã tính trên trang, không tự đoán lá số từ câu hỏi.',[]);
+    const saved=window.AZONE_READING;
+    const topic={wealth:'wealth',career:'career',relationship:'love',overview:'overview'}[kind]||'overview';
+    if(saved?.chart===chart&&saved.language==='vi'&&saved.readings?.[topic])return answer(chartContext(chart)+'\n\nBản dịch máy từ bản luận gốc khớp lá số (chưa được người dịch duyệt):\n\n'+saved.readings[topic].slice(0,7000)+'\n\nCó thể xem đầy đủ trong mục Luận giải. Đây là quan niệm truyền thống, không bảo đảm dự báo.');
     const child=Number.isInteger(chart.currentAge)&&chart.currentAge<18;
     const names=child?['Mệnh','Phụ Mẫu','Phúc Đức']:kind==='wealth'?['Tài Bạch','Quan Lộc','Điền Trạch']:kind==='career'?['Quan Lộc','Mệnh']:kind==='relationship'?['Phu Thê','Mệnh']:['Mệnh','Quan Lộc','Tài Bạch'];
     const records=names.map(n=>palaceByName(chart,n)).filter(Boolean);
     const lines=[chartContext(chart)];
+    if(saved?.chart===chart&&!saved.readings?.[topic])lines.push('Bản luận gốc đã được tải ở mục Luận giải nhưng còn tiếng Trung, chưa có bản dịch tiếng Việt. Phần dưới là diễn giải theo quy tắc từ lá số, không phải bản dịch của dữ liệu gốc.');
     if(child)lines.push('Đây là lá số trẻ nhỏ. Tôi ưu tiên gợi ý học tập, cảm xúc và sự hỗ trợ của gia đình; chưa gán nghề nghiệp, hôn nhân hay mức giàu cho trẻ.');
     if(kind==='wealth'){
       const amount=/(co nao|bao nhieu|muc nao|ty phu|trieu phu|may ty|muc giau)/.test(strip(question));
@@ -231,7 +239,7 @@
   document.body.appendChild(el);
   const $=s=>el.querySelector(s);const launcher=$('#agentLauncher'),panel=$('#agentPanel'),log=$('#agentMessages'),input=$('#agentInput'),chipbox=$('#agentSuggest');
   let lastFocus=null;
-  function bubble(text,who){const row=document.createElement('div');row.className='agent-msg'+(who==='user'?' user':'');const content=document.createElement('div');content.className='agent-msg-bubble';content.textContent=text;row.appendChild(content);log.appendChild(row);log.scrollTop=log.scrollHeight;return row;}
+  function bubble(text,who){const row=document.createElement('div');row.className='agent-msg'+(who==='user'?' user':'');const content=document.createElement('div');content.className='agent-msg-bubble';content.textContent=hideRepositoryLinks(text);row.appendChild(content);log.appendChild(row);log.scrollTop=log.scrollHeight;return row;}
   const prompts=['Năm 2027 thế nào?','Tài vận năm 2027','Luận giải lá số này','Công việc của tôi thế nào?'];
   function suggestions(){chipbox.innerHTML='';prompts.forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent=p;b.addEventListener('click',()=>send(p));chipbox.appendChild(b)})}
   function reset(){conversationVersion++;lastTopic='overview';lastYear=null;log.innerHTML='';bubble('Xin chào! Tôi là trợ lý Tử Vi AZONE STUDIO. Hãy tạo lá số rồi hỏi tổng quan, tài vận, công việc, tình cảm hoặc “năm 2027 thế nào?”. Tôi sẽ dùng đúng lá số đang mở và nhớ chủ đề trong cuộc trò chuyện này.\n\nTôi diễn giải theo quy tắc truyền thống; chưa kết nối mô hình AI và không tự học hay lưu hội thoại sau khi tải lại trang.','agent');suggestions()}

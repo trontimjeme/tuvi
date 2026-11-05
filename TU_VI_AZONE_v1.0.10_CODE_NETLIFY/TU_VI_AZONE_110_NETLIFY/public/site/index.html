@@ -220,6 +220,11 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
 .traffic-dot{width:7px;height:7px;border-radius:50%;background:#a2aaa3}.traffic-ready .traffic-dot{background:#53b28c;box-shadow:0 0 7px #53b28c50}
 .traffic-counters{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px}.traffic-counters div{display:flex;flex-direction:column;gap:1px}.traffic-counters b{color:var(--ink);font-size:21px;line-height:1.4;font-variant-numeric:tabular-nums}.traffic-counters span{font-size:10px;color:var(--light)}.traffic-counters small{font-size:9px}.traffic-status{font-size:9px;margin:8px 0 0;color:var(--light)}
 @media(max-width:600px){.traffic-stats{padding:12px}.traffic-counters{gap:18px}}
+
+.interpret-chart{margin-top:10px;background:#b58b49;color:#fffefa}.interpret-chart[hidden]{display:none!important}
+.reading-language{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;font-size:12px;color:var(--ink)}.reading-language select{padding:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px}
+
+.reading-tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}.reading-tools[hidden]{display:none!important}.reading-tools button{padding:9px 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:650}.reading-tools button:hover{border-color:#76977d}.reading-tools p{flex-basis:100%;margin:2px 0 0;font-size:11px;line-height:1.7;color:var(--light)}#topicDesc{user-select:text;-webkit-user-select:text}
 </style>
   <link rel="stylesheet" href="agent.css" />
 </head>
@@ -278,7 +283,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
       <div class="helpbox" id="calendarHelp"><span class="hmark">ⓘ</span><div>Máy chủ trực tuyến sử dụng thuật toán Code gốc. Ngày âm lịch được quy đổi trước khi an sao. Nếu chọn tỉnh thành Việt Nam, giờ mặt trời dùng kinh độ địa phương và múi giờ UTC+7.</div></div>
       <label class="leap-field" id="leapField" hidden><input type="checkbox" id="leapMonth"> Sinh vào tháng nhuận (âm lịch)</label>
       <div id="engineStatus" role="status" class="engine-status">Đang kiểm tra kết nối với bộ máy lập lá số…</div>
-      <button type="submit" class="primary-btn">TẠO LÁ SỐ TỬ VI <span>↗</span></button><div class="form-under"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3 8 8 9 5-1 8-4 8-9V6zM9 12l2 2 4-4"/></svg> Thông tin sinh được gửi đến máy chủ trực tuyến để tính lá số; không lưu vào cơ sở dữ liệu của bản này</div>
+      <button type="submit" class="primary-btn">TẠO LÁ SỐ TỬ VI <span>↗</span></button><button id="interpretChart" class="primary-btn interpret-chart" type="button" hidden>LUẬN GIẢI <span>↗</span></button><div class="form-under"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3 8 8 9 5-1 8-4 8-9V6zM9 12l2 2 4-4"/></svg> Thông tin sinh được gửi đến máy chủ trực tuyến để tính lá số; không lưu vào cơ sở dữ liệu của bản này</div>
       </form>
     </div>
     <div class="panel"><div class="chart-wrap"><div class="chart-tools"><div class="tabs" id="chartTabs"><button class="active" data-layer="goc">Bản mệnh</button><button data-layer="daihan">Đại hạn</button><button data-layer="luunien">Lưu niên</button></div><div class="chart-actions"><button class="subtle-btn on" id="triangleBtn">◇ Tam phương tứ chính</button><button class="subtle-btn" id="samplePrint">↗ In thử</button></div></div><div class="sample-banner">CHỜ NHẬP NGÀY SINH — NHẤN “TẠO LÁ SỐ TỬ VI” ĐỂ TÍNH TOÁN</div><div class="mobile-hint">↔ Vuốt ngang để xem toàn bộ 12 cung</div><div class="chart-scroll"><div class="chart-board" id="chartBoard" aria-label="Sơ đồ mười hai cung"></div></div><div class="chart-footnote"><div class="legend-text"><span class="legend"><i></i> Cung đang chọn</span><span class="legend"><i class="b"></i> Cung liên hệ</span></div><span id="layerLabel">Chế độ hiển thị: chờ lập lá số</span></div></div></div>
@@ -287,10 +292,12 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
 <div class="calendar-toolbar"><button type="button" id="calendarPrev" aria-label="Tháng trước">‹</button><label><span class="sr-only">Tháng</span><select id="calendarMonth" aria-label="Tháng lịch"></select></label><label><span class="sr-only">Năm</span><input id="calendarYear" type="number" min="1900" max="2100" aria-label="Năm lịch"></label><button type="button" id="calendarNext" aria-label="Tháng sau">›</button><button type="button" id="calendarToday">Hôm nay</button></div>
 <div id="calendarGrid" class="calendar-grid" aria-label="Ngày trong tháng"></div><p id="calendarDetail" class="calendar-detail" role="status" aria-live="polite">Đang tải lịch…</p></div></section></div>
 </section>
-<section id="view-reading" class="page-view" hidden><div class="page-heading"><span class="small-label">13 CHUYÊN ĐỀ LUẬN GIẢI</span><h1>Luận giải lá số</h1><p>Bố cục nội dung theo đúng 13 nhóm chủ đề của bộ dữ liệu luận giải v4.0. Lựa chọn chủ đề để xem cách trình bày và nguyên tắc viện dẫn nguồn.</p></div><div class="topic-grid" id="topics"></div><div class="readout"><div class="panel reader"><span class="small-label">DỮ LIỆU LUẬN GIẢI TỪ Code RELEASE v4.0</span><h3 id="topicTitle">Tổng quan lá số</h3><p id="topicDesc">Lập lá số trước, sau đó nhấn tải dữ liệu luận giải để tra cứu đúng bản ghi theo năm sinh.</p><div class="note"><b>Dữ liệu theo từng năm:</b> tải trực tiếp bản nén <b>year-YYYY.jsonl.zst</b> (~2 MB), kiểm tra SHA-256 và giải nén theo luồng để tìm lá số phù hợp. Không cần tải nguyên bộ hơn 56 GB. Dữ liệu năm 1950–2026; nội dung chỉ mang tính tham khảo văn hóa.</div>
-      <button id="loadReading" class="primary-btn load-reading" type="button">⬇ Tải &amp; giải nén luận giải của lá số</button>
+<section id="view-reading" class="page-view" hidden><div class="page-heading"><span class="small-label">13 CHUYÊN ĐỀ LUẬN GIẢI</span><h1>Luận giải lá số</h1><p>Đọc bản luận gốc khớp với lá số vừa tạo, chọn một trong 13 chủ đề. Bản gốc tiếng Trung; bản dịch tiếng Việt chưa sẵn sàng.</p></div><div class="topic-grid" id="topics"></div><div class="readout"><div class="panel reader"><span class="small-label">BỘ LUẬN GIẢI GỐC · 13 CHỦ ĐỀ</span><h3 id="topicTitle">Tổng quan lá số</h3><div class="note">Bộ luận giải gốc có dữ liệu năm sinh 1950–2026. Bản gốc tiếng Trung được giữ nguyên; hiện chưa có bản dịch tiếng Việt. Nội dung là quan niệm truyền thống, không bảo đảm dự báo hay thay thế tư vấn chuyên môn.</div>
+      <button id="loadReading" class="primary-btn load-reading" type="button">Tải luận giải gốc</button>
+      <label class="reading-language">Nội dung hiển thị <select id="readingLanguage"><option value="zh">Bản gốc tiếng Trung</option><option value="vi" disabled>Bản dịch tiếng Việt — chưa có</option></select></label>
       <p id="readingStatus" class="dataset-status" role="status">Chưa tải dữ liệu. Hãy lập lá số trước.</p>
-      <p id="readingSource" class="dataset-source"></p><span class="light-tag">Có phân loại trích dẫn · Có thông tin nguồn</span></div><div class="callout"><div style="font-size:28px;color:#d7b778">✧</div><h3>Luận giải có căn cứ</h3><p>Bản chính thức sẽ tách phần dữ kiện tính toán, diễn giải truyền thống và trích dẫn nguồn, giúp người đọc nhận biết từng lớp thông tin.</p><button data-go="home">Xem giao diện lá số ↗</button></div></div></section>
+      <div id="readingTools" class="reading-tools" hidden><button type="button" id="copyOriginal">Copy bản gốc</button><button type="button" id="selectOriginal">Bôi đen để dịch</button><button type="button" id="googleTranslate">Google Dịch ↗</button><p id="readingToolStatus" role="status" aria-live="polite">Bôi đen văn bản rồi nhấn chuột phải → Dịch lựa chọn sang Tiếng Việt (nếu trình duyệt hỗ trợ).</p></div>
+      <p id="readingSource" class="dataset-source"></p><span class="light-tag">Có phân loại trích dẫn · Có thông tin nguồn</span><p id="topicDesc">Lập lá số trước, sau đó nhấn tải dữ liệu luận giải để tra cứu đúng bản ghi theo năm sinh.</p></div><div class="callout"><div style="font-size:28px;color:#d7b778">✧</div><h3>Đọc đúng bản luận</h3><p>Nội dung gốc được đối chiếu theo ngày, giờ địa chi và giới tính của lá số đã tính. Hiện giữ nguyên bản tiếng Trung; chưa có bản dịch tiếng Việt. Phần giải thích của trợ lý là diễn giải riêng theo quy tắc.</p><button data-go="home">Xem giao diện lá số ↗</button></div></div></section>
 <section id="view-knowledge" class="page-view" hidden><div class="page-heading"><span class="small-label">TRA CỨU KIẾN THỨC TỬ VI</span><h1>Kho tri thức Đẩu Số</h1><p>Tra cứu 14 chính tinh theo tên gọi tiếng Việt. Nội dung tham khảo sẽ được đối chiếu với kho dữ liệu và văn bản nguồn trong giai đoạn triển khai chính thức.</p></div><label class="searchbar"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input type="search" id="starSearch" placeholder="Tìm tên sao: Tử Vi, Thiên Cơ, Thái Dương..." aria-label="Tìm tên sao"/></label><div class="star-grid" id="starGrid"></div><div class="panel knowledge-detail" id="starDetail"><span class="small-label">THÔNG TIN THUẬT NGỮ</span><div style="margin-top:7px"><strong id="starTitle">Sao Tử Vi</strong></div><p id="starDescription">Tử Vi là một trong 14 chính tinh của hệ thống Tử Vi Đẩu Số. Khi xem một sao cần xét vị trí cung, độ sáng, các sao đồng cung, hội chiếu và hệ thống Tứ Hóa theo trường phái sử dụng.</p><div class="taglist"><span>Vị trí cung</span><span>Miếu · Vượng · Đắc · Hãm</span><span>Tứ Hóa</span></div></div></section>
 <section id="view-library" class="page-view" hidden><div class="page-heading"><span class="small-label">TƯ LIỆU CỔ &amp; NGUỒN THAM KHẢO</span><h1>Thư viện cổ thư</h1><p>Không gian đọc và tra cứu nguyên điển được thiết kế song ngữ theo hướng: tên sách tiếng Việt, bảo tồn nguyên văn để đối chiếu khi có quyền sử dụng phù hợp.</p></div><div class="books"><button class="book-card" data-book="Tử Vi Đẩu Số Toàn Thư"><div class="book-art">書</div><h3>Tử Vi Đẩu Số Toàn Thư</h3><p>Tác phẩm cổ điển trong thư mục mã nguồn. Phiên bản chính thức sẽ có bản dịch Việt và nút đối chiếu nguyên văn.</p><span class="book-link">Xem cấu trúc đọc thử ↗</span></button><button class="book-card" data-book="Tử Vi Đẩu Số Toàn Tập"><div class="book-art">典</div><h3>Tử Vi Đẩu Số Toàn Tập</h3><p>Tra cứu theo chương mục, hỗ trợ tìm thuật ngữ và đối chiếu các dẫn chứng cổ thư.</p><span class="book-link">Xem cấu trúc đọc thử ↗</span></button><button class="book-card" data-book="Cốt Tủy Phú"><div class="book-art">卷</div><h3>Cốt Tủy Phú</h3><p>Nhóm văn bản cổ được đưa vào danh mục thư viện để tiện tra cứu câu phú và chú giải.</p><span class="book-link">Xem cấu trúc đọc thử ↗</span></button></div><div class="library-info" id="bookDetail"><strong>Chọn một đầu sách</strong> để xem cách trình bày thư viện. Demo này không sao chép nội dung sách hay trích dẫn giảng dạy chưa được phép.<br><br><strong>Giấy phép:</strong> mã nguồn áp dụng MIT; bộ dữ liệu mẫu/luận giải áp dụng CC BY 4.0 (yêu cầu ghi công); các đoạn trích bài giảng có điều khoản riêng CC BY-NC-SA 4.0. <a href="https://github.com/Renhuai123/ziwei-doushu" target="_blank" rel="noopener">Kiểm tra nguồn tại Code ↗</a></div></section>
 </main>
@@ -338,6 +345,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
   function go(view){if(!map[view])return;$$('.page-view').forEach(x=>x.hidden=x.id!=='view-'+view);$$('#nav button').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});$('#crumb').textContent=map[view];$('#side').classList.remove('open');$('#backdrop').classList.remove('show');window.scrollTo({top:0,behavior:'instant'});let h={home:'lap-la-so',reading:'luan-giai',knowledge:'tra-cuu',library:'thu-vien'}[view];try{history.replaceState({},'',location.pathname+'#'+h)}catch{}}
   // Dữ liệu ban đầu chỉ là bố cục mẫu. Khi kết nối máy chủ, tính trực tiếp generateChart().
   let computedChart=null, computedParams=null, readingData=null, currentTopicIndex=0, currentBirthName='';
+  let readingOriginals=null, readingTranslations={}, translationStatus='not_configured', readingVersion=0, readingAbort=null;
   const gridPos={5:'1 / 1',6:'1 / 2',7:'1 / 3',8:'1 / 4',9:'2 / 4',10:'3 / 4',11:'4 / 4',0:'4 / 3',1:'4 / 2',2:'4 / 1',3:'3 / 1',4:'2 / 1'};
   const wordSafe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const annualSihua=[['Liêm Trinh','Phá Quân','Vũ Khúc','Thái Dương'],['Thiên Cơ','Thiên Lương','Tử Vi','Thái Âm'],['Thiên Đồng','Thiên Cơ','Văn Xương','Liêm Trinh'],['Thái Âm','Thiên Đồng','Thiên Cơ','Cự Môn'],['Tham Lang','Thái Âm','Hữu Bật','Thiên Cơ'],['Vũ Khúc','Tham Lang','Thiên Lương','Văn Khúc'],['Thái Dương','Vũ Khúc','Thái Âm','Thiên Đồng'],['Cự Môn','Thái Dương','Văn Khúc','Văn Xương'],['Thiên Lương','Tử Vi','Tả Phù','Vũ Khúc'],['Phá Quân','Cự Môn','Thái Âm','Tham Lang']];
@@ -406,7 +414,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
   window.addEventListener('beforeprint',()=>{titleBeforePrint=document.title;document.title='AZONE STUDIO 135 ĐỒNG QUANG';drawNeon();});
   window.addEventListener('afterprint',()=>{document.title=titleBeforePrint;requestAnimationFrame(drawNeon);});
   const topics=[['Tổng quan','Mô tả cấu trúc và dữ kiện lá số','✧'],['Tính cách','Các góc nhìn về đặc điểm cá nhân','人'],['Tình duyên','Nhóm chủ đề quan hệ đôi lứa','♡'],['Sự nghiệp','Các chủ đề nghề nghiệp, công việc','職'],['Tài lộc','Các chủ đề về tài chính, nguồn lực','財'],['Sức khỏe','Tham khảo theo văn hóa truyền thống','+'],['Anh chị em','Các quan hệ trong gia đình','家'],['Con cái','Nhóm chủ đề cung Tử Tức','子'],['Thiên di','Môi trường bên ngoài, dịch chuyển','行'],['Bạn bè','Các quan hệ và cộng sự','友'],['Nhà cửa','Không gian sống và điền trạch','宅'],['Phúc đức','Góc nhìn về đời sống tinh thần','福'],['Cha mẹ','Các quan hệ phụ mẫu','親']];
-  function drawTopics(){topics.forEach(([title,sub,ico],i)=>{let b=document.createElement('button');b.className='topic-card'+(!i?' selected':'');b.innerHTML=`<div class="topic-icon">${ico}</div><strong>${title}</strong><p>${sub}</p>`;b.addEventListener('click',()=>{$$('.topic-card').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('#topicTitle').textContent=title;currentTopicIndex=i;renderReading();});$('#topics').appendChild(b)})}
+  function drawTopics(){topics.forEach(([title,sub,ico],i)=>{let b=document.createElement('button');b.className='topic-card'+(!i?' selected':'');b.innerHTML=`<div class="topic-icon">${ico}</div><strong>${title}</strong><p>${sub}</p>`;b.addEventListener('click',()=>{$$('.topic-card').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('#topicTitle').textContent=title;currentTopicIndex=i;renderReading();if(readingOriginals&&translationStatus==='ready'&&!readingTranslations[topicKey()])loadReading();});$('#topics').appendChild(b)})}
   const stars=['Tử Vi','Thiên Cơ','Thái Dương','Vũ Khúc','Thiên Đồng','Liêm Trinh','Thiên Phủ','Thái Âm','Tham Lang','Cự Môn','Thiên Tướng','Thiên Lương','Thất Sát','Phá Quân'];
   function drawStars(filter=''){const grid=$('#starGrid');grid.innerHTML='';let matching=stars.filter(s=>s.toLocaleLowerCase('vi').includes(filter.toLocaleLowerCase('vi')));if(!matching.length){grid.innerHTML='<div class="empty">Không tìm thấy tên sao phù hợp.</div>';return}matching.forEach((star,i)=>{const b=document.createElement('button');b.className='star-item'+(star==='Tử Vi'?' active':'');b.innerHTML=`<strong>${star}</strong><span>Chính tinh</span>`;b.addEventListener('click',()=>{$$('.star-item').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#starTitle').textContent='Sao '+star;$('#starDescription').textContent=`${star} thuộc 14 chính tinh được ghi nhận trong cấu trúc thuật toán gốc. Khi tra cứu, cần xem vị trí cung, hệ thống sáng tối, các sao hội hợp, Tứ Hóa và trường phái đang áp dụng. Bản tra cứu chính tinh; nội dung diễn giải đầy đủ cần nguồn đối chiếu riêng.`;});grid.appendChild(b)})}
   $$('#nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));$$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));$('.logo').addEventListener('click',e=>{e.preventDefault();go('home')});$('#jumpChart').addEventListener('click',()=>$('#lap-la-so').scrollIntoView({behavior:'smooth',block:'start'}));$('#mobileOpen').addEventListener('click',()=>{$('#side').classList.add('open');$('#backdrop').classList.add('show')});$('#backdrop').addEventListener('click',()=>{$('#side').classList.remove('open');$('#backdrop').classList.remove('show')});
@@ -420,12 +428,77 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
       $('#engineStatus').className='engine-status';$('#engineStatus').textContent='● Đã kết nối máy chủ — thuật toán generateChart() sẵn sàng.';
     }catch{$('#engineStatus').className='engine-status offline';$('#engineStatus').textContent='● Chưa kết nối được máy chủ lập lá số. Kiểm tra bản triển khai Netlify hoặc thử tải lại trang.';}
   }
+  const readingKeys=['overview','personality','love','career','wealth','health','family','children','move','friends','home','spirit','parents'];
+  function topicKey(){return readingKeys[currentTopicIndex];}
   function renderReading(){
-    const key=['overview','personality','love','career','wealth','health','family','children','move','friends','home','spirit','parents'][currentTopicIndex];
-    let val=readingData?.[key];if(!val&&Array.isArray(readingData))val=readingData[currentTopicIndex];
-    $('#topicDesc').classList.toggle('reading-text',!!val);
-    $('#topicDesc').textContent=val?String(val):readingData?'Không có nội dung chủ đề này trong bản ghi dữ liệu.':'Lập lá số và nhấn “Tải & giải nén luận giải” để đọc dữ liệu đã xác thực từ Code.';
+    const language=$('#readingLanguage'),vi=language.querySelector('[value="vi"]');
+    vi.disabled=!readingTranslations[topicKey()];vi.textContent=vi.disabled?'Bản dịch tiếng Việt — chưa có':'Bản dịch tiếng Việt (máy dịch)';
+    if(language.value==='vi'&&vi.disabled)language.value='zh';
+    const key=topicKey();readingData=language.value==='vi'?readingTranslations:readingOriginals;
+    const value=readingData?.[key];$('#topicDesc').classList.toggle('reading-text',!!value);
+    $('#topicDesc').lang=language.value==='vi'?'vi':'zh-CN';$('#topicDesc').setAttribute('translate','yes');
+    $('#readingTools').hidden=!readingOriginals?.[key];
+    $('#readingToolStatus').textContent='Bôi đen văn bản rồi nhấn chuột phải → Dịch lựa chọn sang Tiếng Việt (nếu trình duyệt hỗ trợ).';
+    $('#topicDesc').textContent=value||'Lập lá số rồi bấm Luận giải để lấy bản ghi gốc khớp ngày, giờ và giới tính.';
   }
+  function clearReading(){
+    readingVersion++;readingAbort?.abort();readingOriginals=null;readingTranslations={};readingData=null;translationStatus='not_configured';window.AZONE_READING=null;
+    $('#readingSource').textContent='';$('#readingLanguage').value='zh';renderReading();
+    $('#loadReading').disabled=false;$('#loadReading').textContent='Tải luận giải gốc';
+  }
+  async function loadReading(){
+    if(!computedParams){$('#readingStatus').textContent='Hãy tạo lá số trước khi đọc luận giải.';return;}
+    if(computedParams.birthYear<1950||computedParams.birthYear>2026){$('#readingStatus').textContent='Bộ luận giải gốc chỉ có năm sinh 1950–2026; lá số vẫn được giữ nguyên.';return;}
+    const version=++readingVersion,chart=computedChart,key=topicKey();readingAbort?.abort();readingAbort=new AbortController();
+    const btn=$('#loadReading');btn.disabled=true;btn.textContent='Đang lấy bản luận gốc…';
+    $('#readingStatus').textContent='Đang truy xuất và kiểm tra SHA-256. Lần đầu có thể mất khoảng 30 giây.';
+    try{
+      const r=await fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},signal:readingAbort.signal,body:JSON.stringify({year:computedParams.birthYear,month:computedParams.month,day:computedParams.day,hour:computedParams.hour,gender:computedParams.gender,topic:key})});
+      const data=await r.json();if(version!==readingVersion||chart!==computedChart)return;
+      if(!r.ok)throw Error(data.error||'Không tải được bản luận.');
+      if(!data.found){$('#readingStatus').textContent=data.notice||'Không có bản ghi khớp chính xác.';return;}
+      readingOriginals=data.originalReadings;Object.assign(readingTranslations,data.readings||{});translationStatus=data.translation?.status||'not_configured';
+      window.AZONE_READING={chart:computedChart,key:data.key,originals:readingOriginals,readings:readingTranslations,language:Object.keys(readingTranslations).length?'vi':'zh'};
+      $('#readingLanguage').value=readingTranslations[key]?'vi':'zh';renderReading();
+      $('#readingStatus').textContent=readingTranslations[key]?'✓ Đã tìm đúng bản ghi gốc và có bản dịch máy tiếng Việt cho chủ đề này.':'✓ Đã tìm đúng bản ghi gốc, đủ 13 chủ đề. Nội dung đang là tiếng Trung; '+(translationStatus==='unavailable'?'dịch vụ dịch đang lỗi, chưa có bản dịch tiếng Việt.':'chưa có bản dịch tiếng Việt.');
+      $('#readingSource').textContent='Bộ luận giải v4.0-13d · Tác giả 王多鱼AI · CC BY 4.0. Trích dẫn bên trong có thể có giấy phép riêng. Nội dung truyền thống, không bảo đảm dự báo.';
+    }catch(e){if(version===readingVersion&&e.name!=='AbortError')$('#readingStatus').textContent='Chưa lấy được bản luận gốc. '+e.message;}
+    finally{if(version===readingVersion){btn.disabled=false;btn.textContent=readingOriginals?'Tải lại luận giải gốc':'Tải luận giải gốc';}}
+  }
+  function selectOriginal(){
+    if(!readingOriginals?.[topicKey()])return;
+    $('#readingLanguage').value='zh';renderReading();
+    const text=$('#topicDesc');text.tabIndex=0;text.focus({preventScroll:true});
+    const range=document.createRange();range.selectNodeContents(text);
+    const selected=window.getSelection();selected.removeAllRanges();selected.addRange(range);
+    text.scrollIntoView({block:'center',behavior:'smooth'});
+    $('#readingToolStatus').textContent='Đã bôi đen bản gốc. Nhấn chuột phải và chọn “Dịch lựa chọn sang Tiếng Việt”; hoặc Ctrl+C để copy.';
+  }
+  async function copyReadingText(text){
+    try{if(!navigator.clipboard?.writeText)return false;await navigator.clipboard.writeText(text);return true;}catch{return false;}
+  }
+  $('#selectOriginal').addEventListener('click',selectOriginal);
+  $('#copyOriginal').addEventListener('click',async()=>{
+    const key=topicKey(),text=readingOriginals?.[key];if(!text)return;
+    const copied=await copyReadingText(text);if(key!==topicKey())return;
+    if(copied)$('#readingToolStatus').textContent='Đã copy toàn bộ bản gốc của chủ đề này. Có thể dán vào Google Dịch (Ctrl+V).';
+    else{selectOriginal();$('#readingToolStatus').textContent='Trình duyệt chưa cho phép copy tự động. Văn bản đã được chọn; nhấn Ctrl+C hoặc chọn Copy khi nhấn chuột phải.';}
+  });
+  $('#googleTranslate').addEventListener('click',async()=>{
+    const original=readingOriginals?.[topicKey()];if(!original)return;
+    const selected=window.getSelection(),inside=selected?.anchorNode&&selected?.focusNode&&$('#topicDesc').contains(selected.anchorNode)&&$('#topicDesc').contains(selected.focusNode);
+    const text=inside&&selected.toString().trim()?selected.toString():original;
+    const url=new URL('https://translate.google.com/');url.searchParams.set('sl','zh-CN');url.searchParams.set('tl','vi');url.searchParams.set('op','translate');url.searchParams.set('text',text);
+    // Avoid oversized URLs and never silently truncate the source. Long text is copied in full.
+    const fits=url.href.length<=1800;
+    if(!fits)url.searchParams.delete('text');
+    const copying=fits?Promise.resolve(true):copyReadingText(text);
+    window.open(url.href,'_blank','noopener,noreferrer');
+    const copied=await copying;
+    $('#readingToolStatus').textContent=fits?'Đã mở Google Dịch với đoạn văn bản đã chọn. Bản dịch nằm ở Google, không thay thế bản gốc trong ứng dụng.':copied?'Đã copy toàn bộ văn bản và mở Google Dịch. Nhấn Ctrl+V trong Google Dịch; nếu vượt giới hạn của Google, hãy dịch từng đoạn.':'Đã mở Google Dịch. Hãy bôi đen bản gốc, Copy rồi dán vào Google Dịch.';
+  });
+  $('#readingLanguage').addEventListener('change',renderReading);
+  $('#interpretChart').addEventListener('click',()=>{if(!computedChart)return;go('reading');if(!readingOriginals)loadReading();});
   $('#birthdate').addEventListener('input',e=>e.target.setCustomValidity(''));
   $('#birthForm').addEventListener('submit',async e=>{
     e.preventDefault();
@@ -439,6 +512,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     }
     const date=`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
     dateInput.value=`${dd.padStart(2,'0')}/${mm.padStart(2,'0')}/${yyyy}`;
+    $('#interpretChart').hidden=true;clearReading();
     const btn=$('#birthForm button[type="submit"]');btn.disabled=true;btn.textContent='Đang tính lá số…';
     $('#engineStatus').className='engine-status waiting';$('#engineStatus').textContent='Đang lập lá số qua hệ thống trực tuyến…';
     const request={name:$('#name').value.trim(),birthdate:date,birthtime:time,birthplace:$('#birthplace').value,gender:$('#gender button.active').dataset.gender,calendar:$('#calendar button.active').dataset.calendar,leapMonth:$('#leapMonth').checked};
@@ -447,7 +521,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
       const data=await response.json();if(!response.ok)throw new Error(data.error||'Không lập được lá số.');
       computedChart=data.chart;window.AZONE_ACTIVE_CHART=data.chart;computedParams=data.params;currentBirthName=request.name;
       sample=fromChart(computedChart);selected=computedChart.mingGongBranch;layer='goc';
-      readingData=null;renderReading();$('#readingStatus').textContent='Lá số đã lập. Nhấn “Tải & giải nén luận giải” ở mục Luận giải để nạp dữ liệu năm '+computedParams.birthYear+'.';
+      clearReading();$('#interpretChart').hidden=false;$('#readingStatus').textContent='Lá số đã lập. Bấm Luận giải để lấy bản ghi gốc; hiện chưa có bản dịch tiếng Việt.';
       $$('#chartTabs button').forEach(b=>b.classList.toggle('active',b.dataset.layer==='goc'));
       const banner=document.querySelector('.sample-banner');banner.classList.add('real-chart');banner.textContent='✓ AZONE STUDIO GENCHART';
       $('#engineStatus').className='engine-status';$('#engineStatus').textContent='✓ Tính xong 12 cung. Giờ mặt trời: '+data.meta.trueSolar.clock+' · '+(data.meta.trueSolar.corrected?'đã hiệu chỉnh kinh độ':'không có dữ liệu kinh độ')+' · ngày an sao '+computedParams.day+'/'+computedParams.month+'/'+computedParams.birthYear+'.';
@@ -455,22 +529,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     }catch(e){$('#engineStatus').className='engine-status offline';$('#engineStatus').textContent='Không tạo được lá số: '+e.message;toast('Lỗi: '+e.message);}
     finally{btn.disabled=false;btn.innerHTML='TẠO LÁ SỐ TỬ VI <span>↗</span>';}
   });
-  $('#loadReading').addEventListener('click',async()=>{
-    if(!computedParams){$('#readingStatus').textContent='Anh cần lập lá số trước tại menu Lập lá số.';return;}
-    if(computedParams.birthYear<1950||computedParams.birthYear>2026){$('#readingStatus').textContent='Bộ luận giải v4.0 chỉ có dữ liệu từ năm 1950 đến 2026. Lá số vẫn được tính chính xác theo bộ máy.';return;}
-    if(!confirm('Để tra cứu, máy chủ cần tải tệp nén của năm '+computedParams.birthYear+' (khoảng 2 MB nén) từ Code? Việc giải nén có thể quá giới hạn tài nguyên Netlify khi nhiều người cùng truy cập.'))return;
-    const btn=$('#loadReading');btn.disabled=true;btn.textContent='Đang xử lý bản dữ liệu…';
-    $('#readingStatus').textContent='Đang tải và kiểm tra SHA-256 / giải nén năm '+computedParams.birthYear+'. Với lần đầu, thao tác có thể cần thời gian.';
-    try{
-      const r=await fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({year:computedParams.birthYear,month:computedParams.month,day:computedParams.day,hour:computedParams.hour,gender:computedParams.gender})});
-      const data=await r.json();if(!r.ok)throw new Error(data.error||'Không tải được dữ liệu.');
-      if(!data.found){$('#readingStatus').textContent=data.notice;return;}
-      readingData=data.readings;renderReading();$('#readingStatus').textContent='✓ Đã tìm được 13 chủ đề từ dữ liệu v4.0 cho lá số hiện tại. Chọn chủ đề bên trên để xem.';
-      $('#readingSource').textContent='Nguồn: Renhuai123/ziwei-doushu · Bộ luận giải v4.0-13d · Tác giả 王多鱼AI · CC BY 4.0. Một số trích dẫn có giấy phép riêng.';
-      toast('Đã nạp luận giải từ Code!');
-    }catch(e){$('#readingStatus').textContent='Lỗi dữ liệu: '+e.message+' · Kiểm tra Internet và thử lại.';}
-    finally{btn.disabled=false;btn.textContent='⬇ Tải & giải nén luận giải của lá số';}
-  });
+  $('#loadReading').addEventListener('click',loadReading);
   $$('#chartTabs button').forEach(b=>b.addEventListener('click',()=>{
     layer=b.dataset.layer;$$('#chartTabs button').forEach(x=>x.classList.toggle('active',x===b));draw();
     if(!computedChart)toast('Hãy lập lá số trước để xem dữ liệu thật.');
