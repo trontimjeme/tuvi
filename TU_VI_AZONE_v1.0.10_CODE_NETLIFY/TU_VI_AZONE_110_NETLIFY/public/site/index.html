@@ -24,6 +24,8 @@
     @media(max-width:1090px){.workbench{grid-template-columns:1fr}.form-content{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.form-content>.field{min-width:0}.form-content .helpbox,.form-content .primary-btn,.form-content .form-under{grid-column:1/-1}.chart-board{min-width:650px;grid-template-rows:repeat(4,137px)}.topic-grid{grid-template-columns:repeat(3,1fr)}.star-grid{grid-template-columns:repeat(4,1fr)}.readout{grid-template-columns:1fr}.astro-art{min-width:240px;width:280px;margin-right:8px}.orbit{width:235px;height:235px}}
     @media(max-width:760px){.mobile-hint{display:block}.app{display:block}.side{position:fixed;top:0;bottom:0;left:0;width:258px;transform:translateX(-103%);transition:transform .22s;box-shadow:15px 0 55px rgba(0,0,0,.15)}.side.open{transform:translateX(0)}.side-backdrop.show{position:fixed;inset:0;background:#0008;display:block;z-index:19}.topbar{height:64px;padding:0 16px}.mobile-open{display:grid}.topbar .stamp{display:none}.content{padding:18px 14px 22px}.hero{min-height:unset}.hero-text{padding:31px 24px}.hero h1{font-size:34px;line-height:1.34}.hero p{font-size:12px}.astro-art{display:none}.metrics{gap:8px;margin:12px 0 24px;grid-template-columns:repeat(2,1fr)}.metric{padding:13px 12px}.metric b{font-size:19px}.metric-symbol{height:32px;width:32px;font-size:18px}.section-heading{align-items:center;margin-top:24px}.section-heading h2{font-size:23px}.section-heading .pill{display:none}.chart-board{min-width:600px;grid-template-rows:repeat(4,130px)}.below-grid,.books{grid-template-columns:1fr}.topic-grid{grid-template-columns:repeat(2,1fr)}.footer{margin-top:21px}.page-heading{margin:2px 0 18px}.page-heading h1{font-size:35px}}
     @media(max-width:470px){.topbar .crumb{font-size:11px}.topbar .outline-btn{padding:7px 9px}.metric{gap:7px}.metric span{font-size:10px}.form-content{display:block}.chart-tools{display:block}.chart-actions{margin-top:9px}.chart-wrap{padding:10px}.sample-banner{line-height:1.5}.topic-grid{gap:9px}.topic-card{padding:14px;min-height:130px}.topic-card p{font-size:10px}.star-grid{grid-template-columns:repeat(3,1fr)}.books{gap:11px}}
+    .center-watermark{display:block;width:min(230px,82%);height:58px;object-fit:contain;margin-top:12px;opacity:.6;filter:drop-shadow(0 1px 1px rgba(83,92,72,.24));pointer-events:none;user-select:none}
+    @media print{.center-watermark{opacity:.6;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
     @media print{.side,.topbar,.hero,.metrics,.form-panel,.chart-actions,.footer,.below-grid{display:none!important}.app{display:block}.content{padding:0}.chart-scroll{overflow:visible}.chart-board{min-width:0;grid-template-rows:repeat(4,145px)}body{background:white}}
   
     /* AZONE · Emerald Ice Neon — v1.0.4
@@ -148,6 +150,40 @@
 body.dark .engine-status{background:#1d3930;color:#c2e8d5;border-color:#427361}
 body.dark .engine-status.offline{background:#483021;color:#ffd9b3;border-color:#946146}
 body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
+
+/* Final A4 chart: independent of the surrounding application theme. */
+.chart-board{position:relative;isolation:isolate;width:100%;max-width:794px;min-width:640px;aspect-ratio:210/297;margin:0 auto;grid-template-rows:repeat(4,minmax(0,1fr));background:#55575b;border-color:#66686b;outline:none;box-shadow:none;color:#f6f1df}
+.chart-board .palace,.chart-board .chart-center{background:#252629;color:#f6f1df}
+.chart-board .palace{padding:14px 12px;transition:background .25s,box-shadow .25s}
+.chart-board .palace:hover,.chart-board .palace.current,.chart-board .palace.related{background:#302e29;box-shadow:inset 0 0 0 1px #857453}
+.chart-board .palace-head strong,.chart-board .palace .stars span{color:#f6f1df}
+.chart-board .palace .stars{margin-top:18px;gap:8px}
+.chart-board .palace .stars span{font-size:14px;line-height:1.45}
+.chart-board .palace .stars span.secondary,.chart-board .branch{color:#dfbd7a;font-size:11px;line-height:1.6}
+.chart-board .palace-foot{color:#b4b5b5;font-size:10px}
+.chart-board .chart-center{background:#202124;justify-content:flex-start;padding:22px 14px}
+.chart-board .center-brand,.chart-board .center-line,.chart-board .center-emblem,.chart-board .center-watermark{z-index:4;background:#202124}
+.chart-board .center-brand{color:#f6f1df;font-size:22px}
+.chart-board .center-line{color:#c8c9c9;font-size:12px;line-height:1.9}
+.chart-board .center-line strong{color:#f6f1df}
+.chart-board .center-emblem{width:54px;height:54px;margin:0 0 14px}
+.chart-board .center-emblem img{width:100%;height:100%;display:block}
+.chart-board .center-watermark{position:absolute;bottom:24px;width:75%;height:60px;opacity:.45;filter:none;margin:0}
+.chart-board .center-demo{background:transparent;border-color:#686968;color:#d5d5d5}
+.chart-board .palace.triad-lit{background:#2d3335;box-shadow:inset 0 0 0 1.5px #caffff,inset 0 0 22px #7eeeff30;z-index:2}
+.chart-neon{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible;color:#dfffff;filter:drop-shadow(0 0 3px #6aeaff) drop-shadow(0 0 7px #62dcff80)}
+.chart-neon line{stroke:currentColor;stroke-width:1.4;vector-effect:non-scaling-stroke}
+.chart-neon circle{fill:#efffff;stroke:#8bedff;stroke-width:1;vector-effect:non-scaling-stroke}
+@page{size:A4 portrait;margin:10mm}
+@media print{
+ body{margin:0!important;padding:0!important}
+ body *:not(:has(#chartBoard)):not(#chartBoard):not(#chartBoard *){display:none!important}
+ body *:has(#chartBoard){display:block!important;position:static!important;margin:0!important;padding:0!important;border:0!important;min-height:0!important;height:auto!important}
+ body *{visibility:hidden!important}
+ #chartBoard,#chartBoard *{visibility:visible!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ #chartBoard{position:absolute;left:0;top:0;width:190mm;min-width:0;max-width:none;height:268.7mm;aspect-ratio:210/297;grid-template-rows:repeat(4,minmax(0,1fr));break-inside:avoid}
+ .chart-board .palace{padding:10px 8px}.chart-board .palace .stars span{font-size:12px}.chart-board .palace .stars span.secondary{font-size:10px}
+}
 </style>
   <link rel="stylesheet" href="agent.css" />
 </head>
@@ -283,7 +319,7 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     let related=showTriangle?[selected,(selected+4)%12,(selected+8)%12,(selected+6)%12]:[selected];
     $('#chartBoard').innerHTML='';
     for(const p of sample){
-      let b=document.createElement('button');b.className='palace'+(p.branch===selected?' current':related.includes(p.branch)?' related':'');b.type='button';b.style.gridArea=p.grid;b.setAttribute('aria-label','Xem Cung '+p.name+', '+p.chi);b.setAttribute('aria-pressed',p.branch===selected?'true':'false');
+      let b=document.createElement('button');b.dataset.palace=p.name;b.className='palace'+(p.branch===selected?' current':related.includes(p.branch)?' related':'');b.type='button';b.style.gridArea=p.grid;b.setAttribute('aria-label','Xem Cung '+p.name+', '+p.chi);b.setAttribute('aria-pressed',p.branch===selected?'true':'false');
       let badge=badgeFor(p).map(x=>`<span class="vbadge ${x==='Kỵ'?'red':x==='Khoa'?'gold':''}">${wordSafe(x)}</span>`).join('');
       let major=p.stars.length?p.stars.map(wordSafe).join(' · '):'Vô chính diệu';
       let extra=computedChart?p.rawStars.filter(x=>x.type!=='major').slice(0,5).map(x=>x.name).join(' · '):p.extra;
@@ -292,16 +328,44 @@ body.dark .dataset-status,body.dark .dataset-source{color:#a4bcb0}
     }
     let center=document.createElement('div');center.className='chart-center';
     if(computedChart){
-      const L=computedChart.lunarInfo;center.innerHTML=`<div class="center-emblem">☯</div><div class="center-brand">LÁ SỐ TỬ VI</div><div class="center-separator"></div><div class="center-line"><strong id="viewPerson"></strong><br>Âm lịch: ${wordSafe(L.lunarDay)}/${wordSafe(L.lunarMonth)}/${wordSafe(L.lunarYear)}<br>${wordSafe(computedChart.wuxingJuName||'')}<br>Mệnh: ${wordSafe(sample.find(p=>p.branch===computedChart.mingGongBranch)?.chi||'')} · Thân: ${wordSafe(sample.find(p=>p.branch===computedChart.shenGongBranch)?.chi||'')}</div><div class="center-demo">THUẬT TOÁN GỐC · ĐÃ TÍNH</div>`;
+      const L=computedChart.lunarInfo;center.innerHTML=`<div class="center-emblem"><img src="/site/azone-emblem.svg" alt="AZONE"></div><div class="center-brand">LÁ SỐ TỬ VI</div><div class="center-separator"></div><div class="center-line"><strong id="viewPerson"></strong><br>Âm lịch: ${wordSafe(L.lunarDay)}/${wordSafe(L.lunarMonth)}/${wordSafe(L.lunarYear)}<br>${wordSafe(computedChart.wuxingJuName||'')}<br>Mệnh: ${wordSafe(sample.find(p=>p.branch===computedChart.mingGongBranch)?.chi||'')} · Thân: ${wordSafe(sample.find(p=>p.branch===computedChart.shenGongBranch)?.chi||'')}</div><img class="center-watermark" src="/site/azone-watermark.png" alt="AZONE STUDIO — Architecture &amp; Design" width="230" height="58">`;
       center.querySelector('#viewPerson').textContent=currentBirthName || 'Lá số cá nhân';
-    }else center.innerHTML='<div class="center-emblem">☯</div><div class="center-brand">TỬ VI ĐẨU SỐ</div><div class="center-separator"></div><div class="center-line">Sơ đồ minh họa <strong>12 cung</strong><br>Nhập ngày sinh để tính thật<br>Chưa kết nối dữ liệu cá nhân</div><div class="center-demo">CHỜ LẬP LÁ SỐ</div>';
+    }else center.innerHTML='<div class="center-emblem"><img src="/site/azone-emblem.svg" alt="AZONE"></div><div class="center-brand">TỬ VI ĐẨU SỐ</div><div class="center-separator"></div><div class="center-line">Sơ đồ minh họa <strong>12 cung</strong><br>Nhập ngày sinh để tính thật<br>Chưa kết nối dữ liệu cá nhân</div><div class="center-demo">CHỜ LẬP LÁ SỐ</div>';
     $('#chartBoard').appendChild(center);
+    requestAnimationFrame(drawNeon);
     let p=sample.find(x=>x.branch===selected);if(!p)return;
     $('#activePalaceName').textContent='Cung '+p.name;
     $('#activePalaceBranch').textContent=computedChart?'Vị trí: '+p.chi+' · Sao an theo nguồn Code':'Vị trí mẫu: '+p.chi+' · Minh họa';
     $('#activePalaceText').textContent=computedChart?('Chính tinh: '+(p.stars.join(', ')||'Vô chính diệu')+'. Sao khác: '+(p.extra||'Không có')+'. '+(descriptions[p.name]||'Cần xét đồng cung, hội chiếu, Tứ Hóa và vận hạn khi luận giải.')):descriptions[p.name];
     $('#layerLabel').textContent='Chế độ: '+({goc:'Bản mệnh',daihan:'Đại hạn',luunien:'Lưu niên'}[layer])+(computedChart?(layer==='luunien'?' '+annualYear:' · tính từ lá số thật'):' (minh họa)');
   }
+  function drawNeon(){
+    const board=$('#chartBoard');board.querySelector('.chart-neon')?.remove();
+    const names=['Mệnh','Tài Bạch','Quan Lộc'];
+    const targets=[...board.querySelectorAll('.palace')].filter(b=>names.includes(b.dataset.palace));
+    const active=!!computedChart&&showTriangle&&names.includes(sample.find(p=>p.branch===selected)?.name);
+    targets.forEach(b=>b.classList.toggle('triad-lit',active));
+    if(!active)return;
+    const rect=board.getBoundingClientRect();if(!rect.width||!rect.height)return;
+    const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+    svg.classList.add('chart-neon');svg.setAttribute('viewBox',`0 0 ${rect.width} ${rect.height}`);svg.setAttribute('aria-hidden','true');
+    const hub={x:rect.width*.49,y:rect.height*.61};
+    function dot(x,y,r){const c=document.createElementNS(ns,'circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);svg.appendChild(c)}
+    targets.forEach(b=>{
+      const r=b.getBoundingClientRect(),cx=r.left-rect.left+r.width/2,cy=r.top-rect.top+r.height/2;
+      // Anchor on the cell edge facing the empty center, never through another palace.
+      let x=cx,y=cy;
+      if(cy<rect.height*.26)y=r.bottom-rect.top;
+      else if(cy>rect.height*.74)y=r.top-rect.top;
+      else if(cx<rect.width*.26)x=r.right-rect.left;
+      else x=r.left-rect.left;
+      const line=document.createElementNS(ns,'line');
+      line.setAttribute('x1',hub.x);line.setAttribute('y1',hub.y);line.setAttribute('x2',x);line.setAttribute('y2',y);svg.appendChild(line);dot(x,y,3.5);
+    });dot(hub.x,hub.y,4.5);board.appendChild(svg);
+  }
+  new ResizeObserver(()=>requestAnimationFrame(drawNeon)).observe($('#chartBoard'));
+  window.addEventListener('beforeprint',drawNeon);
+  window.addEventListener('afterprint',()=>requestAnimationFrame(drawNeon));
   const topics=[['Tổng quan','Mô tả cấu trúc và dữ kiện lá số','✧'],['Tính cách','Các góc nhìn về đặc điểm cá nhân','人'],['Tình duyên','Nhóm chủ đề quan hệ đôi lứa','♡'],['Sự nghiệp','Các chủ đề nghề nghiệp, công việc','職'],['Tài lộc','Các chủ đề về tài chính, nguồn lực','財'],['Sức khỏe','Tham khảo theo văn hóa truyền thống','+'],['Anh chị em','Các quan hệ trong gia đình','家'],['Con cái','Nhóm chủ đề cung Tử Tức','子'],['Thiên di','Môi trường bên ngoài, dịch chuyển','行'],['Bạn bè','Các quan hệ và cộng sự','友'],['Nhà cửa','Không gian sống và điền trạch','宅'],['Phúc đức','Góc nhìn về đời sống tinh thần','福'],['Cha mẹ','Các quan hệ phụ mẫu','親']];
   function drawTopics(){topics.forEach(([title,sub,ico],i)=>{let b=document.createElement('button');b.className='topic-card'+(!i?' selected':'');b.innerHTML=`<div class="topic-icon">${ico}</div><strong>${title}</strong><p>${sub}</p>`;b.addEventListener('click',()=>{$$('.topic-card').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('#topicTitle').textContent=title;currentTopicIndex=i;renderReading();});$('#topics').appendChild(b)})}
   const stars=['Tử Vi','Thiên Cơ','Thái Dương','Vũ Khúc','Thiên Đồng','Liêm Trinh','Thiên Phủ','Thái Âm','Tham Lang','Cự Môn','Thiên Tướng','Thiên Lương','Thất Sát','Phá Quân'];

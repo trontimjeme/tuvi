@@ -1,11 +1,11 @@
 /*
   TỬ VI · AZONE STUDIO · v1.0.10
   Trợ lý tri thức bản demo OFFLINE: trả lời có quy tắc từ dữ liệu gốc Code
-  KHÔNG phải LLM, KHÔNG được huấn luyện trên 56.6GB, KHÔNG luận lá số người dùng.
+  Không phải LLM hay hệ thống tự huấn luyện. Đọc lá số đang mở và giải thích theo dữ liệu nguồn.
 */
 (()=>{
   'use strict';
-  const GH='https://github.com/Renhuai123/ziwei-doushu/blob/main/';
+  const GH='https://github.com/Renhuai123/ziwei-doushu/blob/a600484a49255039d0725f1ba9e11ca81a948f97/';
   const SOURCES={
     constants:{name:'Bảng sao & Tứ Hóa · Code',url:GH+'lib/ziwei/constants.ts'},
     types:{name:'Cấu trúc 12 cung · Code',url:GH+'lib/ziwei/types.ts'},
@@ -68,6 +68,49 @@
   const strip=s=>String(s).toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
   const matchesWord=(q,word)=>(' '+q+' ').includes(' '+strip(word)+' ');
   const answer=(text,sources=[])=>({text,sources});
+  const FOUR_LABELS={'禄':'Hóa Lộc','权':'Hóa Quyền','科':'Hóa Khoa','忌':'Hóa Kỵ'};
+  const palaceByName=(chart,name)=>(chart.palaces||[]).find(p=>strip(p.name)===strip(name));
+  function describePalace(p){
+    if(!p)return 'Không có dữ liệu cung.';
+    const stars=(p.stars||[]).map(s=>s.name+(FOUR_LABELS[s.siHua]?' '+FOUR_LABELS[s.siHua]:''));
+    return `${p.name} tại ${p.chi}: ${stars.join(' · ')||'chưa có dữ liệu sao'}.`;
+  }
+  function periodFor(chart,p){
+    if(!p)return null;
+    // Use actual engine ranges; do not invent dates or recalculate nominal ages.
+    const dx=(chart.daXians||[]).find(d=>d.palaceBranch===p.branch);
+    if(dx&&Number.isInteger(dx.startAge)&&Number.isInteger(dx.endAge))return `${dx.startAge}–${dx.endAge} tuổi`;
+    return Array.isArray(p.daXianAge)?`${p.daXianAge[0]}–${p.daXianAge[1]} tuổi`:null;
+  }
+  function chartContext(chart){
+    const b=chart.birthInfo||{}, o=b.origInput||{};
+    const date=[o.day||b.day,o.month||b.month,o.year||b.year].filter(Boolean).join('/');
+    const clock=Number.isInteger(o.clockHour)?` ${String(o.clockHour).padStart(2,'0')}:${String(o.clockMinute||0).padStart(2,'0')}`:'';
+    return `Đang đọc lá số ${b.gender==='male'?'nam':b.gender==='female'?'nữ':''} sinh ${date}${clock}.`;
+  }
+  function personalReply(chart,kind){
+    if(!chart||!Array.isArray(chart.palaces)||chart.palaces.length!==12)return answer('Hãy tạo lá số trước bằng ngày, giờ sinh và giới tính. Tôi chỉ đọc dữ liệu của lá số đã tính trên trang, không tự đoán lá số từ câu hỏi.',[SOURCES.algorithm]);
+    const names=kind==='wealth'?['Tài Bạch','Quan Lộc','Điền Trạch']:kind==='career'?['Quan Lộc','Mệnh']:kind==='relationship'?['Phu Thê','Mệnh']:['Mệnh','Quan Lộc','Tài Bạch'];
+    const records=names.map(n=>palaceByName(chart,n)).filter(Boolean);
+    const lines=[chartContext(chart)];
+    if(kind==='wealth')lines.push('Chưa thể xác định “giàu nhất khi nào”. Mã nguồn cung cấp vị trí sao và các đại hạn, chưa có mô hình dự báo hay tiêu chí đã kiểm chứng để xếp hạng mức giàu. Tôi có thể chỉ ra các giai đoạn liên quan đến tài chính để anh/chị đối chiếu:');
+    else lines.push('Dữ liệu cá nhân đang có trong mã nguồn và lá số:');
+    for(const p of records){
+      lines.push('• '+describePalace(p));
+      const period=periodFor(chart,p);
+      if(period)lines.push(`  Đại hạn đi qua cung ${p.name}: ${period}.`);
+      const traits=(p.stars||[]).filter(s=>s.type==='major').map(s=>{const known=STARS.find(k=>k.name===s.name);return known?`${known.name}: ${known.traits}`:null}).filter(Boolean);
+      if(traits.length)lines.push('  Từ khóa sao theo bảng nguồn: '+traits.join('; ')+'.');
+    }
+    if(kind==='wealth'){
+      const career=palaceByName(chart,'Quan Lộc'), home=palaceByName(chart,'Điền Trạch');
+      const careerPeriod=periodFor(chart,career),homePeriod=periodFor(chart,home);
+      if(careerPeriod)lines.push(`Nếu muốn xem khả năng tạo thu nhập từ công việc, có thể xem sâu đại hạn ${careerPeriod} ở Quan Lộc${homePeriod?`, đồng thời đối chiếu giai đoạn ${homePeriod} ở Điền Trạch về chủ đề nhà cửa, tài sản`:''}. Đây là chọn chủ đề để phân tích, không phải kết luận giai đoạn đó giàu nhất.`);
+      lines.push('Đại hạn ở Tài Bạch cũng không mặc nhiên là đỉnh tài sản. Hóa Lộc/Hóa Quyền nêu trên là sao bản mệnh, không phải Hóa Lộc/Hóa Quyền phát sinh riêng cho đại hạn. Chưa có phân tích lưu niên để chọn một năm cụ thể.');
+    }
+    lines.push('Tuổi đại hạn dùng cách tính tuổi mụ của thuật toán. Đây là diễn giải tham khảo văn hóa từ dữ liệu nguồn, không phải dự báo chắc chắn hay căn cứ đầu tư.');
+    return answer(lines.join('\n\n'),[SOURCES.algorithm,SOURCES.constants,SOURCES.types]);
+  }
   function findReply(question){
     const q=strip(question); const src=(...ids)=>ids.map(i=>SOURCES[i]);
     if(!q)return answer('Anh/chị có thể hỏi về tên sao, Tứ Hóa, 12 cung, giờ sinh hoặc bộ dữ liệu của dự án.',src('readme'));
@@ -75,7 +118,11 @@
       return answer('Hiện tại tôi mới có bộ kiến thức tra cứu chọn lọc từ mã nguồn. Tôi CHƯA đọc hay được huấn luyện trên bộ luận giải v4.0. Nguồn Code công bố 674.976 lá số × 13 chủ đề = 8.774.688 bài, khoảng 161 MB nén và 56,6 GB sau giải nén. Muốn sử dụng thật cần tải các gói theo năm, kiểm tra mã băm, lập chỉ mục và tích hợp công cụ truy vấn.',src('readme','release'));
     }
     const chart = window.AZONE_ACTIVE_CHART;
-    if(chart && /(la so cua toi|xem la so|cung menh cua toi|sao nao o cung|sao trong cung|12 cung cua toi|cac sao trong la so)/.test(q)){
+    if(/(giau|tai van|tai chinh|kiem tien|tien bac|tai san|phat tai)/.test(q))return personalReply(chart,'wealth');
+    if(/(su nghiep|cong viec|nghe nghiep|cong danh)/.test(q)&&!/(la gi|dinh nghia)/.test(q))return personalReply(chart,'career');
+    if(/(hon nhan|tinh duyen|vo chong)/.test(q)&&!/(la gi|dinh nghia)/.test(q))return personalReply(chart,'relationship');
+    if(/(luan giai|luan la so|giai la so)/.test(q))return personalReply(chart,'overview');
+    if(chart && /(la so nay|la so cua toi|xem la so|cung menh cua toi|sao nao o cung|sao trong cung|12 cung cua toi|cac sao trong la so)/.test(q)){
       const target=PALACES.find(p => q.includes(strip(p[0])));
       const palaces=chart.palaces || [];
       const record=target ? palaces.find(p => strip(p.name)===strip(target[0])) : palaces.find(p => p.branch===chart.mingGongBranch);
@@ -134,20 +181,20 @@
       <span class="agent-avatar"><img src="azone-bot.png" alt=""/><i class="agent-online-dot"></i></span><span class="agent-label">Trợ lý Tử Vi<small>Tra cứu tri thức</small></span>
     </button>
     <section class="agent-panel" id="agentPanel" role="dialog" aria-modal="false" aria-label="Trợ lý Tử Vi" aria-hidden="true">
-      <div class="agent-head"><span class="agent-avatar"><img src="azone-bot.png" alt="" /></span><div class="agent-headcopy"><strong>Trợ lý Tử Vi</strong><span>Tra cứu nguồn · Chưa kết nối AI</span></div><button id="agentClear" class="agent-head-btn" type="button" title="Xóa cuộc trò chuyện" aria-label="Xóa cuộc trò chuyện">↺</button><button id="agentClose" class="agent-head-btn" type="button" title="Đóng" aria-label="Đóng trợ lý">×</button></div>
-      <div class="agent-status"><b>● Tri thức demo có dẫn nguồn</b> · Chưa nhập 56,6 GB dữ liệu luận giải và chưa kết nối mô hình AI.</div>
+      <div class="agent-head"><span class="agent-avatar"><img src="azone-bot.png" alt="" /></span><div class="agent-headcopy"><strong>Trợ lý Tử Vi</strong><span>Đọc lá số · Đối chiếu mã nguồn</span></div><button id="agentClear" class="agent-head-btn" type="button" title="Xóa cuộc trò chuyện" aria-label="Xóa cuộc trò chuyện">↺</button><button id="agentClose" class="agent-head-btn" type="button" title="Đóng" aria-label="Đóng trợ lý">×</button></div>
+      <div class="agent-status"><b>● Đọc 12 cung và đại hạn có dẫn nguồn</b> · Phân tích theo quy tắc, chưa kết nối mô hình AI.</div>
       <div id="agentMessages" class="agent-messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
       <div id="agentSuggest" class="agent-suggest" aria-label="Gợi ý câu hỏi"></div>
-      <form id="agentForm" class="agent-compose"><textarea id="agentInput" rows="1" maxlength="600" placeholder="Hỏi về sao, cung, Tứ Hóa..." aria-label="Nhập câu hỏi cho trợ lý"></textarea><button class="agent-send" type="submit" aria-label="Gửi câu hỏi" title="Gửi câu hỏi">➤</button></form>
+      <form id="agentForm" class="agent-compose"><textarea id="agentInput" rows="1" maxlength="600" placeholder="Hỏi về lá số, tài vận, công việc..." aria-label="Nhập câu hỏi cho trợ lý"></textarea><button class="agent-send" type="submit" aria-label="Gửi câu hỏi" title="Gửi câu hỏi">➤</button></form>
       <div class="agent-disclaimer">Thông tin để nghiên cứu văn hóa · Không dùng cho quyết định hệ trọng · Hội thoại chỉ ở trình duyệt</div>
     </section>`;
   document.body.appendChild(el);
   const $=s=>el.querySelector(s);const launcher=$('#agentLauncher'),panel=$('#agentPanel'),log=$('#agentMessages'),input=$('#agentInput'),chipbox=$('#agentSuggest');
   let lastFocus=null;
   function bubble(text,who,sources){const row=document.createElement('div');row.className='agent-msg'+(who==='user'?' user':'');const content=document.createElement('div');content.className='agent-msg-bubble';content.textContent=text;row.appendChild(content);if(sources&&sources.length){const refs=document.createElement('div');refs.className='agent-sources';sources.forEach(s=>{const a=document.createElement('a');a.href=s.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='↗ '+s.name;refs.appendChild(a)});row.appendChild(refs)}log.appendChild(row);log.scrollTop=log.scrollHeight}
-  const prompts=['14 chính tinh gồm những sao nào?','Tứ Hóa năm Giáp','Tam phương tứ chính là gì?','Kho dữ liệu lớn đã được xử lý chưa?'];
+  const prompts=['Lá số này giàu nhất khi nào?','Luận giải lá số này','Công việc của tôi thế nào?','Tứ Hóa năm Giáp'];
   function suggestions(){chipbox.innerHTML='';prompts.forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent=p;b.addEventListener('click',()=>send(p));chipbox.appendChild(b)})}
-  function reset(){log.innerHTML='';bubble('Xin chào! Tôi là trợ lý Tử Vi của Không Gian Sống AZONE STUDIO. Tôi có thể trả lời các câu hỏi tra cứu từ phần dữ liệu Code đã chọn lọc, kèm nguồn đối chiếu.\n\nĐây là bản demo tra cứu theo quy tắc, chưa phải Bot AI được huấn luyện trên toàn bộ kho.', 'agent', [SOURCES.readme]);suggestions()}
+  function reset(){log.innerHTML='';bubble('Xin chào! Tôi là trợ lý Tử Vi của Không Gian Sống AZONE STUDIO. Tôi đọc 12 cung, sao và đại hạn của lá số đang mở, kết hợp bảng kiến thức từ mã nguồn có dẫn chứng. Hãy tạo lá số rồi hỏi về tài vận, công việc hoặc hôn nhân.\n\nTôi phân tích theo quy tắc, không tự học từ hội thoại và chưa kết nối mô hình AI hay toàn bộ kho luận giải.', 'agent', [SOURCES.readme]);suggestions()}
   function send(value){const q=value.trim();if(!q)return;bubble(q,'user');input.value='';const rep=findReply(q);window.setTimeout(()=>{bubble(rep.text,'agent',rep.sources)},180);}
   function show(open){if(open){lastFocus=document.activeElement;panel.classList.add('open');panel.setAttribute('aria-hidden','false');launcher.setAttribute('aria-expanded','true');launcher.setAttribute('aria-label','Đóng trợ lý Tử Vi');setTimeout(()=>input.focus(),90)}else{panel.classList.remove('open');panel.setAttribute('aria-hidden','true');launcher.setAttribute('aria-expanded','false');launcher.setAttribute('aria-label','Mở trợ lý Tử Vi');(lastFocus&&lastFocus.focus?lastFocus:launcher).focus()}}
   launcher.addEventListener('click',()=>show(!panel.classList.contains('open')));$('#agentClose').addEventListener('click',()=>show(false));$('#agentClear').addEventListener('click',reset);$('#agentForm').addEventListener('submit',e=>{e.preventDefault();send(input.value)});input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(input.value)}});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))show(false)});reset();

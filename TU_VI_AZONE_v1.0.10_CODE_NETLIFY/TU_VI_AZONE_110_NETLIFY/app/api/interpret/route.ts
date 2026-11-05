@@ -73,7 +73,7 @@ async function lookupRecord(q:Input, signal:AbortSignal){
       }
     }catch{/* ignore corrupted unrelated records */}
   };
-  const decomp=new Decompress((chunk:Uint8Array, final:boolean)=>{
+  const decomp=new Decompress((chunk:Uint8Array, final = false)=>{
     if(found)return;
     buffer+=decoder.decode(chunk,{stream:!final});
     let pos;

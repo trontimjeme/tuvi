@@ -12,6 +12,14 @@
 - `POST /api/interpret`: tra cứu luận giải v4.0 bằng cách tải **một tệp theo năm**, kiểm tra SHA-256 và giải nén theo luồng `fzstd`. Đây là chế độ thử nghiệm tài nguyên lớn, có thể bị timeout trên Netlify; không nên dùng cho tải cao trước khi lập chỉ mục trong cơ sở dữ liệu riêng.
 - Bot tra cứu trên giao diện đọc bảng sao, cung từ mã nguồn đã đối chiếu; Bot có thể đọc vị trí sao vừa lập ở trình duyệt. **Không phải mô hình ngôn ngữ và không được huấn luyện trên 56,6 GB dữ liệu.**
 
+## Bot đọc lá số đang mở
+
+Sau khi tạo lá số, mở **Trợ lý Tử Vi** và hỏi “Lá số này giàu nhất khi nào?”, “Công việc của tôi thế nào?” hoặc “Luận giải lá số này”. Bot đọc trực tiếp `window.AZONE_ACTIVE_CHART` do API trả về, đối chiếu tên sao, Tứ Hóa bản mệnh và khoảng tuổi đại hạn với kiến thức chọn lọc từ mã nguồn. Khi thay lá số, câu trả lời tiếp theo dùng dữ liệu mới. Nếu chưa tạo lá số, bot yêu cầu tạo trước.
+
+Câu hỏi tài vận được trả lời bằng dữ liệu các cung Tài Bạch, Quan Lộc và Điền Trạch, kèm khoảng đại hạn tương ứng và từ khóa sao. Bot không xếp hạng mức giàu, không đồng nhất đại hạn Tài Bạch với đỉnh tài sản và không tự suy ra một năm phát tài từ Tứ Hóa bản mệnh. Các nguồn mã được ghim cùng commit engine `a600484a49255039d0725f1ba9e11ca81a948f97`.
+
+Đây là chức năng phân tích theo quy tắc, không tự huấn luyện từ hội thoại, không gọi mô hình AI bên ngoài và không cần API key. Các liên kết nguồn và từ khóa sao không thay thế bộ luận giải v4.0 hay kiểm chứng dự báo. Nội dung hội thoại vẫn chỉ nằm trong trình duyệt.
+
 ## Hướng dẫn triển khai Netlify
 
 1. Giải nén ZIP này. **Không sử dụng chức năng Drag & Drop một file HTML để triển khai**: website này có Next.js API và cần xây dựng mã bằng Node.js.

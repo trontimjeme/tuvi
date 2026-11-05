@@ -1,0 +1,15 @@
+# Installed dependencies and Next.js output
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Engine fetched and verified by scripts/prepare-upstream.mjs
+.source-upstream/
+**/lib/ziwei/
+**/lib/.source-commit
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
